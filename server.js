@@ -34,40 +34,44 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 
-// Trust reverse proxies (nginx, IIS, cloud LBs) so Express sees real HTTPS
-app.set('trust proxy', 1);
-
-// IS_PROD: true if NODE_ENV=production  OR  FORCE_HTTPS=true env var is set
-// Set FORCE_HTTPS=true on your deployment server if you have HTTPS but forgot NODE_ENV
+// IS_PROD: true when NODE_ENV=production OR FORCE_HTTPS=true
+// Set either of these env vars on your deployed server — no code changes needed.
 const IS_PROD = process.env.NODE_ENV === 'production' ||
                 process.env.FORCE_HTTPS === 'true';
 
+// Trust reverse proxies only in production (nginx, IIS, AWS LB etc.)
+if (IS_PROD) app.set('trust proxy', 1);
+
+// ── Session store: file-based (survives restarts) with MemoryStore fallback ──
+const SESSION_DIR = path.join(__dirname, 'sessions');
+const fs = require('fs');
+// Guarantee the directory exists before FileStore tries to use it
+try { fs.mkdirSync(SESSION_DIR, { recursive: true }); } catch (_) {}
+
+let sessionStore;
+try {
+  sessionStore = new FileStore({
+    path:    SESSION_DIR,
+    ttl:     8 * 60 * 60,  // 8 hours in seconds
+    retries: 1,
+    logFn:   () => {}       // silence noisy logs
+  });
+  console.log('✅ Session store: file-based (./sessions/)');
+} catch (e) {
+  console.warn('⚠️  FileStore failed, falling back to MemoryStore:', e.message);
+  sessionStore = undefined; // express-session uses MemoryStore when store is undefined
+}
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'inventory-kisna-secret-2024',
-  resave: false,
+  secret:           process.env.SESSION_SECRET || 'inventory-kisna-secret-2024',
+  resave:           false,
   saveUninitialized: false,
-
-  // ── Persistent file-based session store ────────────────────────────────────
-  // Replaces the default MemoryStore which loses all sessions on restart.
-  // Sessions are written to ./sessions/*.json on the server file system.
-  store: new FileStore({
-    path:    path.join(__dirname, 'sessions'), // folder auto-created if absent
-    ttl:     8 * 60 * 60,                      // 8 hours in seconds (match cookie)
-    retries: 0,                                // fail fast — don't hang the request
-    logFn:   () => {}                          // suppress noisy file-store logs
-  }),
-
+  store:            sessionStore,
   cookie: {
-    maxAge:   8 * 60 * 60 * 1000, // 8 hours in ms
+    maxAge:   8 * 60 * 60 * 1000, // 8 hours
     httpOnly: true,
-    // ─── DEPLOYMENT GUIDE ────────────────────────────────────────────────────
-    // CASE A — HTTP-only deployment (direct IP, no SSL):  keep secure:false/lax
-    // CASE B — HTTPS with same domain (most common):      set NODE_ENV=production
-    //           OR set FORCE_HTTPS=true in your env vars
-    // CASE C — Cross-origin / subdomain HTTPS:            same as B
-    // ─────────────────────────────────────────────────────────────────────────
-    secure:   IS_PROD,  // only transmit cookie over HTTPS in production
-    sameSite: 'lax'    // 'lax' works for all same-domain deployments (HTTP or HTTPS)
+    secure:   IS_PROD,  // HTTPS-only cookie in production
+    sameSite: 'lax'    // works for all same-domain deployments
   }
 }));
 
@@ -76,6 +80,16 @@ function requireAuth(req, res, next) {
   if (req.session && req.session.user) return next();
   return res.status(401).json({ error: 'Unauthorized' });
 }
+
+// Helper: returns the date string as-is (YYYY-MM-DD).
+// The SQL queries combine this with GETDATE()'s time (SQL Server = IST),
+// so we never rely on JavaScript's timezone (AWS Node.js runs in UTC).
+function _withCurrentTime(dateStr) {
+  return dateStr || null;
+}
+// SQL expression to use in queries (replaces @date):
+// CAST(@date AS DATETIME) + CAST(CAST(GETDATE() AS TIME) AS DATETIME)
+// → user's selected date  +  current IST time from SQL Server
 
 // =================== AUTH ROUTES ===================
 app.post('/api/login', async (req, res) => {
@@ -912,20 +926,32 @@ const IW_FLAG = {
 };
 
 // Helper: insert one inward item; status is always 'Y'
-async function _insertInwardItem(inwardId, it, user) {
+// isEdit=true → also sets ModifyBy/ModifyDate (row was re-inserted during a PUT)
+async function _insertInwardItem(inwardId, it, user, isEdit = false) {
   const qty = parseInt(it.TotalQty) || 0;
   const dcq = parseInt(it.DCQty) || 0;
   const rate = parseFloat(it.Rate) || 0;
   const amt = qty * rate;
   try {
-    await query(
-      `INSERT INTO [InwardItem]([InwardId],[CategoryId],[ItemId],[DCQty],[TotalQty],
-         [rate],[TotalAmt],[status],[AddedBy],[AddedDate])
-       VALUES(@iid,@cat,@itmid,@dcq,@qty,@rate,@amt,'Y',@user,GETDATE())`,
-      {
-        iid: inwardId, cat: it.CategoryId || null, itmid: it.ItemId || null,
-        dcq, qty, rate, amt, user
-      });
+    if (isEdit) {
+      await query(
+        `INSERT INTO [InwardItem]([InwardId],[CategoryId],[ItemId],[DCQty],[TotalQty],
+           [rate],[TotalAmt],[status],[AddedBy],[AddedDate],[ModifyBy],[ModifyDate])
+         VALUES(@iid,@cat,@itmid,@dcq,@qty,@rate,@amt,'Y',@user,GETDATE(),@muser,GETDATE())`,
+        {
+          iid: inwardId, cat: it.CategoryId || null, itmid: it.ItemId || null,
+          dcq, qty, rate, amt, user, muser: user
+        });
+    } else {
+      await query(
+        `INSERT INTO [InwardItem]([InwardId],[CategoryId],[ItemId],[DCQty],[TotalQty],
+           [rate],[TotalAmt],[status],[AddedBy],[AddedDate])
+         VALUES(@iid,@cat,@itmid,@dcq,@qty,@rate,@amt,'Y',@user,GETDATE())`,
+        {
+          iid: inwardId, cat: it.CategoryId || null, itmid: it.ItemId || null,
+          dcq, qty, rate, amt, user
+        });
+    }
   } catch (_) {
     // Fallback without optional columns
     await query(
@@ -942,7 +968,8 @@ async function _insertInwardItem(inwardId, it, user) {
 }
 
 // Helper: after all items saved, check for RP/SP and write InwardReturnItem
-async function _handleReturnItems(inwardId, savedItems, user) {
+// isEdit=true → also sets ModifyBy/ModifyDate on return item rows
+async function _handleReturnItems(inwardId, savedItems, user, isEdit = false) {
   const needsReturn = savedItems.some(s => s.flag === 'RP' || s.flag === 'SP');
   if (!needsReturn) return;
 
@@ -958,14 +985,18 @@ async function _handleReturnItems(inwardId, savedItems, user) {
 
     const pendingQty = Math.max(0, s.dcq - s.qty);
     try {
-      await query(
-        `INSERT INTO [InwardReturnItem]
-           ([InwardId],[CategoryId],[ItemId],[DCQty],[TotalQty],[ItemFlag],
+      const retCols = isEdit
+        ? `[InwardId],[CategoryId],[ItemId],[DCQty],[TotalQty],[ItemFlag],
             [status],[Reason],[ReturnMode],[PersonName],[CourierName],[ReturnDate],[ReturnDocNo],
-            [AddedBy],[AddedDate])
-         VALUES(@iid,@cat,@itmid,@dcq,@rqty,@flag,
-                'Y',@reason,@rmode,@pname,@cname,@rdate,@rdoc,
-                @user,GETDATE())`,
+            [AddedBy],[AddedDate],[ModifyBy],[ModifyDate]`
+        : `[InwardId],[CategoryId],[ItemId],[DCQty],[TotalQty],[ItemFlag],
+            [status],[Reason],[ReturnMode],[PersonName],[CourierName],[ReturnDate],[ReturnDocNo],
+            [AddedBy],[AddedDate]`;
+      const retVals = isEdit
+        ? `@iid,@cat,@itmid,@dcq,@rqty,@flag,'Y',@reason,@rmode,@pname,@cname,@rdate,@rdoc,@user,GETDATE(),@user,GETDATE()`
+        : `@iid,@cat,@itmid,@dcq,@rqty,@flag,'Y',@reason,@rmode,@pname,@cname,@rdate,@rdoc,@user,GETDATE()`;
+      await query(
+        `INSERT INTO [InwardReturnItem] (${retCols}) VALUES(${retVals})`,
         {
           iid: inwardId, cat: s.CategoryId || null, itmid: s.ItemId || null,
           dcq: s.dcq, rqty: pendingQty, flag: s.flag,
@@ -994,10 +1025,10 @@ app.post('/api/inward', requireAuth, async (req, res) => {
       `INSERT INTO [Inward]([OrderNumber],[DCNumber],[InvoiceNumber],[InwardDate],
          [VendorId],[DivisionId],[Status],[AddedBy],[AddedDate])
        OUTPUT INSERTED.[InwardId]
-       VALUES(@onum,@dcnum,@invnum,@date,@vid,@did,'Y',@user,GETDATE())`,
+       VALUES(@onum,@dcnum,@invnum,CAST(@date AS DATETIME)+CAST(CAST(GETDATE() AS TIME) AS DATETIME),@vid,@did,'Y',@user,GETDATE())`,
       {
         onum: OrderNumber || '', dcnum: DCNumber || '', invnum: InvoiceNumber || '',
-        date: InwardDate || new Date().toISOString().split('T')[0],
+        date: _withCurrentTime(InwardDate),
         vid: VendorId || null, did: DivisionId || null, user
       });
     const inwardId = r.recordset[0].InwardId;
@@ -1025,12 +1056,12 @@ app.put('/api/inward/:inwardId', requireAuth, async (req, res) => {
     // Update Inward header
     await query(
       `UPDATE [Inward] SET [OrderNumber]=@onum,[DCNumber]=@dcnum,[InvoiceNumber]=@invnum,
-         [InwardDate]=@date,[VendorId]=@vid,[DivisionId]=@did,[InwardFlag]=NULL,
+         [InwardDate]=CAST(@date AS DATETIME)+CAST(CAST(GETDATE() AS TIME) AS DATETIME),[VendorId]=@vid,[DivisionId]=@did,[InwardFlag]=NULL,
          [ModifyBy]=@user,[ModifyDate]=GETDATE()
        WHERE [InwardId]=@iid`,
       {
         onum: OrderNumber || '', dcnum: DCNumber || '', invnum: InvoiceNumber || '',
-        date: InwardDate || null, vid: VendorId || null, did: DivisionId || null,
+        date: _withCurrentTime(InwardDate), vid: VendorId || null, did: DivisionId || null,
         user, iid: inwardId
       });
 
@@ -1048,12 +1079,12 @@ app.put('/api/inward/:inwardId', requireAuth, async (req, res) => {
     // Re-insert all items
     const savedItems = [];
     for (const it of (items || [])) {
-      const s = await _insertInwardItem(inwardId, it, user);
+      const s = await _insertInwardItem(inwardId, it, user, true); // isEdit=true
       savedItems.push({ ...it, ...s });
     }
 
     // Re-evaluate return items
-    await _handleReturnItems(inwardId, savedItems, user);
+    await _handleReturnItems(inwardId, savedItems, user, true); // isEdit=true
 
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1922,13 +1953,13 @@ app.post('/api/issues', requireAuth, async (req, res) => {
          [CourierPersonMob],[CourierPersonLocation],[IssueNote],
          [IsIssueClose],[DivisionId],[DistCode],[RequestedForDealerID],[Status],[AddedBy],[AddedDate],[RequestId])
        OUTPUT INSERTED.[IssueId]
-       VALUES(@rmode,@reqby,@dep,@date,
+       VALUES(@rmode,@reqby,@dep,CAST(@date AS DATETIME)+CAST(CAST(GETDATE() AS TIME) AS DATETIME),
               @delmode,@delperson,@cid,@cname,@tid,
               @cmob,@cloc,@note,
               @close,@did,@dist,@dealid,'Y',@user,GETDATE(),@reqid)`,
       {
         rmode: RequestMode || null, reqby: RequestByEmpName || null, dep: DepName || null,
-        date: IssueDate || new Date().toISOString().split('T')[0],
+        date: IssueDate,
         delmode: DeliverMode || null, delperson: DeliverByPersonName || null,
         cid: CourierId ? parseInt(CourierId) : null,
         cname: CourierName || null, tid: TrackId || null,
@@ -2025,8 +2056,12 @@ app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
       const p = n => String(n).padStart(2, '0');
       return `${p(dt.getDate())}-${p(dt.getMonth() + 1)}-${dt.getFullYear()} ${p(dt.getHours())}:${p(dt.getMinutes())}:${p(dt.getSeconds())}`;
     };
-    const currentDT = fmtDT(new Date());
-    const issueDT = fmtDT(iss.IssueDate);
+
+    const moment = require('moment-timezone');
+      const currentDT = moment()
+        .tz("Asia/Kolkata")
+        .format("DD-MM-YYYY HH:mm:ss");
+        const issueDT = fmtDT(iss.IssueDate);
 
     // 6. Build items table rows
     const itemRows = items.map(r => `
@@ -2167,10 +2202,10 @@ app.post('/api/issue-returns', requireAuth, async (req, res) => {
     const r = await query(
       `INSERT INTO [IssueReturn]([ReturnMode],[PersonName],[CourierName],[ReturnDate],[ReturnDocNo],[Status],[AddedBy],[AddedDate])
        OUTPUT INSERTED.[ReturnId]
-       VALUES(@rmode,@pname,@cname,@rdate,@rdoc,'Y',@user,GETDATE())`,
+       VALUES(@rmode,@pname,@cname,CAST(@rdate AS DATETIME)+CAST(CAST(GETDATE() AS TIME) AS DATETIME),@rdoc,'Y',@user,GETDATE())`,
       {
         rmode: ReturnMode || null, pname: PersonName || null, cname: CourierName || null,
-        rdate: ReturnDate || new Date().toISOString().split('T')[0],
+        rdate: ReturnDate || null,
         rdoc: ReturnDocNo || null, user
       });
     const returnId = r.recordset[0].ReturnId;
@@ -2360,9 +2395,9 @@ app.post('/api/orders', requireAuth, async (req, res) => {
     const r = await query(
       `INSERT INTO [Order]([OrderNumber],[OrderDate],[Vendorid],[DivisionId],[Status],[AddedBy],[AddedDate])
        OUTPUT INSERTED.[OrderID]
-       VALUES(@num,@date,@vid,@did,'Y',@user,GETDATE())`,
+       VALUES(@num,CAST(@date AS DATETIME)+CAST(CAST(GETDATE() AS TIME) AS DATETIME),@vid,@did,'Y',@user,GETDATE())`,
       {
-        num: OrderNumber || '', date: OrderDate || new Date().toISOString().split('T')[0],
+        num: OrderNumber || '', date: OrderDate,
         vid: Vendorid || null, did: DivisionId || null, user
       });
     const orderId = r.recordset[0].OrderID;
@@ -2593,7 +2628,7 @@ app.put('/api/orders/:orderId', requireAuth, async (req, res) => {
   const orderId = parseInt(req.params.orderId);
   try {
     await query(
-      `UPDATE [Order] SET [OrderDate]=@date,[Vendorid]=@vid,[DivisionId]=@did,
+      `UPDATE [Order] SET [OrderDate]=CAST(@date AS DATETIME)+CAST(CAST(GETDATE() AS TIME) AS DATETIME),[Vendorid]=@vid,[DivisionId]=@did,
        [ModifyBy]=@user,[ModifyDate]=GETDATE() WHERE [OrderID]=@oid`,
       { date: OrderDate || null, vid: Vendorid || null, did: DivisionId || null, user, oid: orderId });
     // Replace all items
@@ -2602,8 +2637,8 @@ app.put('/api/orders/:orderId', requireAuth, async (req, res) => {
       const qty = parseInt(it.TotalQty) || 0;
       const rate = parseFloat(it.Rate) || 0;
       await query(
-        `INSERT INTO [OrderItem]([OrderID],[CategoryId],[ItemId],[TotalQty],[Rate],[TotalAmt],[Status],[AddedBy],[AddedDate])
-         VALUES(@oid,@cat,@iid,@qty,@rate,@amt,'Y',@user,GETDATE())`,
+        `INSERT INTO [OrderItem]([OrderID],[CategoryId],[ItemId],[TotalQty],[Rate],[TotalAmt],[Status],[AddedBy],[AddedDate],[ModifyBy],[ModifyDate])
+         VALUES(@oid,@cat,@iid,@qty,@rate,@amt,'Y',@user,GETDATE(),@user,GETDATE())`,
         {
           oid: orderId, cat: it.CategoryId || null, iid: it.ItemId || null,
           qty, rate, amt: qty * rate, user
@@ -3420,3 +3455,4 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`🚀 Inventory Web App running at http://localhost:${PORT}`);
 });
+
