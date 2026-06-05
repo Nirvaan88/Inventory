@@ -10,9 +10,9 @@ module.exports = {
     env_production: {
       NODE_ENV:        'production',
       DB_MODE:         'sql',
-      DB_HOST:         'localhost',
+      DB_HOST:         '43.204.41.145',
       DB_USER:         'sa',
-      DB_PASS:         'Kisna@123Strong',
+      DB_PASS:         'sa@123',
       DB_NAME:         'Inventorybkp',
       DB_PORT:         '1433',
       SESSION_SECRET:  'kisna-inventory-super-secret-2024'

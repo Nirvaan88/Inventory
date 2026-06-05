@@ -48,7 +48,7 @@ if (DB_MODE === 'sql') {
  
 } else {
   // ── Local / Windows Auth (msnodesqlv8 + ODBC Driver 17) ─────────────────
-  sql = require('mssql/msnodesqlv8');
+  const sql = require('mssql');
   config = {
     connectionString:
       'Driver={ODBC Driver 17 for SQL Server};' +
