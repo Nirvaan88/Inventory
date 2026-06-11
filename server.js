@@ -4,10 +4,16 @@ const FileStore = require('session-file-store')(session); // persistent session 
 const path = require('path');
 const XLSX = require('xlsx');
 const nodemailer = require('nodemailer');
+<<<<<<< HEAD
 const puppeteer  = require('puppeteer');
 const { query, execSP, sql, getPool } = require('./db');
 
 // â”€â”€ Zoho Mail transporter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+=======
+const { query, execSP, sql, getPool } = require('./db');
+
+// ── Zoho Mail transporter ──────────────────────────────────────────
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 const mailer = nodemailer.createTransport({
   host: 'smtp.zoho.in',
   port: 587,
@@ -18,6 +24,7 @@ const mailer = nodemailer.createTransport({
   }
 });
 
+<<<<<<< HEAD
 //Challan HTML builder (server-side mirror of the frontend template) 
 function _buildChallanHtml(h, rows, trackId, courierLink) {
   const totalPcs    = rows.reduce((s, r) => s + (Number(r.Pcs)    || 0), 0);
@@ -142,6 +149,8 @@ async function _generateChallanPdf(issueId, deliverMode, distCode, trackId, cour
   }
 }
 
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 const app = express();
 const PORT = 3000;
 
@@ -160,14 +169,22 @@ app.use(express.static(path.join(__dirname, 'public'), {
 }));
 
 // IS_PROD: true when NODE_ENV=production OR FORCE_HTTPS=true
+<<<<<<< HEAD
 // Set either of these env vars on your deployed server â€” no code changes needed.
+=======
+// Set either of these env vars on your deployed server — no code changes needed.
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 const IS_PROD = process.env.NODE_ENV === 'production' ||
                 process.env.FORCE_HTTPS === 'true';
 
 // Trust reverse proxies only in production (nginx, IIS, AWS LB etc.)
 if (IS_PROD) app.set('trust proxy', 1);
 
+<<<<<<< HEAD
 // â”€â”€ Session store: file-based (survives restarts) with MemoryStore fallback â”€â”€
+=======
+// ── Session store: file-based (survives restarts) with MemoryStore fallback ──
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 const SESSION_DIR = path.join(__dirname, 'sessions');
 const fs = require('fs');
 // Guarantee the directory exists before FileStore tries to use it
@@ -181,9 +198,15 @@ try {
     retries: 1,
     logFn:   () => {}       // silence noisy logs
   });
+<<<<<<< HEAD
   console.log('âœ… Session store: file-based (./sessions/)');
 } catch (e) {
   console.warn('âš ï¸  FileStore failed, falling back to MemoryStore:', e.message);
+=======
+  console.log('✅ Session store: file-based (./sessions/)');
+} catch (e) {
+  console.warn('⚠️  FileStore failed, falling back to MemoryStore:', e.message);
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   sessionStore = undefined; // express-session uses MemoryStore when store is undefined
 }
 
@@ -214,7 +237,11 @@ function _withCurrentTime(dateStr) {
 }
 // SQL expression to use in queries (replaces @date):
 // CAST(@date AS DATETIME) + CAST(CAST(GETDATE() AS TIME) AS DATETIME)
+<<<<<<< HEAD
 // â†’ user's selected date  +  current IST time from SQL Server
+=======
+// → user's selected date  +  current IST time from SQL Server
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
 // =================== AUTH ROUTES ===================
 app.post('/api/login', async (req, res) => {
@@ -847,11 +874,16 @@ app.post('/api/vendors/export-xlsx', requireAuth, async (req, res) => {
 // Dealer Master
 app.get('/api/dealers', requireAuth, async (req, res) => {
   try {
+<<<<<<< HEAD
     const { search, searchBy, page, pageSize, showInactive } = req.query;
+=======
+    const { search, searchBy, page, pageSize } = req.query;
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     const pg = Math.max(1, parseInt(page) || 1);
     const ps = Math.min(200, Math.max(1, parseInt(pageSize) || 25));
     const offset = (pg - 1) * ps;
 
+<<<<<<< HEAD
     // Always filter Active-only unless showInactive=1 is explicitly requested
     const conditions = showInactive === '1' ? [] : [`dm.[Status]='Y'`];
     const params = {};
@@ -865,6 +897,19 @@ app.get('/api/dealers', requireAuth, async (req, res) => {
       }
     }
     const baseWhere = conditions.length ? ` WHERE ${conditions.join(' AND ')}` : '';
+=======
+    let baseWhere = '';
+    const params = {};
+    if (search) {
+      if (searchBy === 'DealerID') {
+        baseWhere = ' WHERE dm.[DealerID]=@search';
+        params.search = parseInt(search);
+      } else {
+        baseWhere = ' WHERE dm.[DealerCompanyName] LIKE @search';
+        params.search = `%${search}%`;
+      }
+    }
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
     const selectCols = `dm.[DealerID], dm.[DealerCompanyName], dm.[ContactPersonName],
              dm.[Addr1], dm.[Addr2], dm.[Addr3], dm.[Mobile], dm.[GST],
@@ -879,11 +924,19 @@ app.get('/api/dealers', requireAuth, async (req, res) => {
       LEFT JOIN [Division] d ON dm.[DivisionId] = d.[DivisionId]`;
 
     if (page) {
+<<<<<<< HEAD
+=======
+      // Paginated mode
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       const dataSql  = `SELECT ${selectCols} ${joins}${baseWhere} ORDER BY dm.[DealerID] OFFSET ${offset} ROWS FETCH NEXT ${ps} ROWS ONLY`;
       const countSql = `SELECT COUNT(*) AS total FROM [DealerMaster] dm${baseWhere}`;
       const [dataR, countR] = await Promise.all([query(dataSql, params), query(countSql, params)]);
       return res.json({ data: dataR.recordset, total: countR.recordset[0].total, page: pg, pageSize: ps });
     } else {
+<<<<<<< HEAD
+=======
+      // Legacy: return array (for dropdowns / select-all)
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       const sql = `SELECT ${selectCols} ${joins}${baseWhere} ORDER BY dm.[DealerID]`;
       const r = await query(sql, params);
       return res.json(r.recordset);
@@ -891,15 +944,23 @@ app.get('/api/dealers', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 
 // â”€â”€ Vendor Performance Scorecard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+=======
+// ── Vendor Performance Scorecard ─────────────────────────────────────────────
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 // GET /api/vendor-scorecard
 // Returns per-vendor metrics: AvgLeadDays, AvgAccuracyPct, ReturnRatePct, TotalOrders
 app.get('/api/vendor-scorecard', requireAuth, async (req, res) => {
   try {
     const r = await query(`
       WITH
+<<<<<<< HEAD
       /* 1. Delivery speed: avg days from OrderDate â†’ InwardDate */
+=======
+      /* 1. Delivery speed: avg days from OrderDate → InwardDate */
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       DeliveryStats AS (
         SELECT o.[Vendorid] AS VendorId,
           AVG(CAST(DATEDIFF(day, o.[OrderDate], iw.[InwardDate]) AS FLOAT)) AS AvgLeadDays,
@@ -972,6 +1033,7 @@ app.get('/api/vendor-scorecard', requireAuth, async (req, res) => {
 // Purchase Inward
 app.get('/api/inward', requireAuth, async (req, res) => {
   try {
+<<<<<<< HEAD
     const { inwardId, orderNo, divisionId, fromDate, toDate } = req.query;
     const params = {};
     const conditions = [];
@@ -1021,6 +1083,17 @@ app.get('/api/inward', requireAuth, async (req, res) => {
       LEFT JOIN [Division] d ON i.[DivisionId] = d.[DivisionId]
       ${whereClause}
       ORDER BY i.[InwardId] DESC`;
+=======
+    const { inwardId, orderNo } = req.query;
+    let q = `SELECT i.*, v.Name AS VendorName, d.DivisionName
+             FROM [Inward] i
+             LEFT JOIN [Vendor]   v ON i.[VendorId]   = v.[vendorid]
+             LEFT JOIN [Division] d ON i.[DivisionId] = d.[DivisionId]`;
+    const params = {};
+    if (inwardId) { q += ' WHERE i.[InwardId] = @inwardId'; params.inwardId = inwardId; }
+    else if (orderNo) { q += ' WHERE i.[OrderNumber] LIKE @orderNo'; params.orderNo = '%' + orderNo + '%'; }
+    q += ' ORDER BY i.[InwardId] DESC';
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     const r = await query(q, params);
     res.json(r.recordset);
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1082,7 +1155,11 @@ app.get('/api/orders/items-by-div-vendor', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // Map frontend ItemStatus labels â†’ DB ItemFlag codes
+=======
+// Map frontend ItemStatus labels → DB ItemFlag codes
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 const IW_FLAG = {
   'Complete': 'C',
   'Return Complete': 'RC',
@@ -1092,7 +1169,11 @@ const IW_FLAG = {
 };
 
 // Helper: insert one inward item; status is always 'Y'
+<<<<<<< HEAD
 // isEdit=true â†’ also sets ModifyBy/ModifyDate (row was re-inserted during a PUT)
+=======
+// isEdit=true → also sets ModifyBy/ModifyDate (row was re-inserted during a PUT)
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 async function _insertInwardItem(inwardId, it, user, isEdit = false) {
   const qty = parseInt(it.TotalQty) || 0;
   const dcq = parseInt(it.DCQty) || 0;
@@ -1134,7 +1215,11 @@ async function _insertInwardItem(inwardId, it, user, isEdit = false) {
 }
 
 // Helper: after all items saved, check for RP/SP and write InwardReturnItem
+<<<<<<< HEAD
 // isEdit=true â†’ also sets ModifyBy/ModifyDate on return item rows
+=======
+// isEdit=true → also sets ModifyBy/ModifyDate on return item rows
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 async function _handleReturnItems(inwardId, savedItems, user, isEdit = false) {
   const needsReturn = savedItems.some(s => s.flag === 'RP' || s.flag === 'SP');
   if (!needsReturn) return;
@@ -1199,14 +1284,22 @@ app.post('/api/inward', requireAuth, async (req, res) => {
       });
     const inwardId = r.recordset[0].InwardId;
 
+<<<<<<< HEAD
     // Insert each item â†’ status 'Y', map ItemStatus to flag code
+=======
+    // Insert each item → status 'Y', map ItemStatus to flag code
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     const savedItems = [];
     for (const it of (items || [])) {
       const s = await _insertInwardItem(inwardId, it, user);
       savedItems.push({ ...it, ...s });   // merge original it fields + computed qty/dcq/flag
     }
 
+<<<<<<< HEAD
     // If any RP or SP â†’ fill InwardReturnItem + set InwardFlag='Open'
+=======
+    // If any RP or SP → fill InwardReturnItem + set InwardFlag='Open'
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     await _handleReturnItems(inwardId, savedItems, user);
 
     res.json({ success: true, InwardId: inwardId });
@@ -1393,6 +1486,7 @@ app.post('/api/dealers/export-xlsx', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // â”€â”€ Toggle Dealer Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.patch('/api/dealers/:id/status', requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);
@@ -1510,6 +1604,9 @@ app.post('/api/dealers/sync-franchise', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+=======
+// Courier — full CRUD + bulk ops
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/couriers', requireAuth, async (req, res) => {
   try {
     const r = await query(`
@@ -1625,7 +1722,11 @@ app.post('/api/couriers/export-xlsx', requireAuth, async (req, res) => {
 
 
 // User Master
+<<<<<<< HEAD
 // User Master â€” full CRUD + bulk ops
+=======
+// User Master — full CRUD + bulk ops
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/users', requireAuth, async (req, res) => {
   try {
     const r = await query(`
@@ -1701,7 +1802,11 @@ app.post('/api/users/export-xlsx', requireAuth, async (req, res) => {
 });
 
 
+<<<<<<< HEAD
 // Login Master â€” full CRUD + forgot-password + bulk ops
+=======
+// Login Master — full CRUD + forgot-password + bulk ops
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/logins', requireAuth, async (req, res) => {
   try {
     const r = await query(`
@@ -1741,7 +1846,11 @@ app.delete('/api/logins/:id', requireAuth, async (req, res) => {
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
+<<<<<<< HEAD
 // Forgot Password â€” validate LoginID + SecurityQtn + Answer, then update Password
+=======
+// Forgot Password — validate LoginID + SecurityQtn + Answer, then update Password
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.post('/api/logins/forgot-password', requireAuth, async (req, res) => {
   const { LoginID, SecurityQtn, Answer, NewPassword } = req.body;
   try {
@@ -1785,7 +1894,11 @@ app.post('/api/logins/export-xlsx', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // Kit Master â€” Kit-level grouped API
+=======
+// Kit Master — Kit-level grouped API
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/kit-details', requireAuth, async (req, res) => {
   try {
     // Get all kits with division info
@@ -2142,7 +2255,11 @@ app.post('/api/category-codes/export-xlsx', requireAuth, async (req, res) => {
 
 
 
+<<<<<<< HEAD
 // =================== ISSUE ITEMS â€“ FULL CRUD ===================
+=======
+// =================== ISSUE ITEMS – FULL CRUD ===================
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
 // GET all dealers (with optional divisionId filter)
 app.get('/api/dealers', requireAuth, async (req, res) => {
@@ -2214,14 +2331,22 @@ app.get('/api/issues/:id/items', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // POST â€“ create new issue
+=======
+// POST – create new issue
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.post('/api/issues', requireAuth, async (req, res) => {
   const { RequestMode, DivisionId, DistCode, RequestedForDealerID, RequestByEmpName, DepName, IssueDate,
     DeliverMode, DeliverByPersonName, CourierId, CourierName, TrackId,
     CourierPersonMob, CourierPersonLocation, IssueNote, items } = req.body;
   const user = req.session.user?.loginId || 'admin';
   try {
+<<<<<<< HEAD
     // Calculate IsIssueClose: if all items have IssueQty >= RequestQty â†’ Close
+=======
+    // Calculate IsIssueClose: if all items have IssueQty >= RequestQty → Close
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     const allComplete = (items || []).every(it => (parseInt(it.IssueQty) || 0) >= (parseInt(it.RequestQty) || 0));
     const isClose = allComplete ? 'Close' : 'Open';
 
@@ -2281,7 +2406,11 @@ app.post('/api/issues', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // PUT â€“ update track ID only
+=======
+// PUT – update track ID only
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.put('/api/issues/:id/track', requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);
   const { TrackId } = req.body;
@@ -2294,10 +2423,17 @@ app.put('/api/issues/:id/track', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // PUT â€“ update track ID AND send delivery email
 app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);
   const { TrackId, challanHtml } = req.body;
+=======
+// PUT – update track ID AND send delivery email
+app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { TrackId } = req.body;
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   const user = req.session.user?.loginId || 'admin';
   try {
     // 1. Update TrackId
@@ -2305,6 +2441,7 @@ app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
       `UPDATE [Issue] SET [TrackId]=@tid,[ModifyBy]=@user,[ModifyDate]=GETDATE() WHERE [IssueId]=@id`,
       { tid: TrackId || null, user, id });
 
+<<<<<<< HEAD
     // 2. Fetch issue header + courier tracking link + deliver mode (needed for challan)
     const issR = await query(`
       SELECT iss.[IssueId], iss.[CourierName], iss.[IssueDate], iss.[DistCode],
@@ -2312,6 +2449,12 @@ app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
       FROM   [Issue] iss
       LEFT JOIN [Courier] c ON iss.[CourierId] = c.[CourierId]
       WHERE iss.[IssueId] = @id`, { id });
+=======
+    // 2. Fetch issue header
+    const issR = await query(`
+      SELECT iss.[IssueId], iss.[CourierName], iss.[IssueDate], iss.[DistCode]
+      FROM   [Issue] iss WHERE iss.[IssueId] = @id`, { id });
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     const iss = issR.recordset[0];
     if (!iss) return res.status(404).json({ error: 'Issue not found' });
 
@@ -2341,8 +2484,17 @@ app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
       const p = n => String(n).padStart(2, '0');
       return `${p(dt.getDate())}-${p(dt.getMonth() + 1)}-${dt.getFullYear()} ${p(dt.getHours())}:${p(dt.getMinutes())}:${p(dt.getSeconds())}`;
     };
+<<<<<<< HEAD
     const currentDT = fmtDT(new Date());
     const issueDT = fmtDT(iss.IssueDate);
+=======
+
+    const moment = require('moment-timezone');
+      const currentDT = moment()
+        .tz("Asia/Kolkata")
+        .format("DD-MM-YYYY HH:mm:ss");
+        const issueDT = fmtDT(iss.IssueDate);
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
     // 6. Build items table rows
     const itemRows = items.map(r => `
@@ -2381,7 +2533,10 @@ app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
   <br>
   <p style="margin:2px 0"><strong>Courier Name :</strong> ${iss.CourierName || ''}</p>
   <p style="margin:2px 0"><strong>Track ID :</strong> ${TrackId || ''}</p>
+<<<<<<< HEAD
   ${iss.CourierLink ? `<p style="margin:2px 0"><strong>Courier Tracking Link :</strong> <a href="${iss.CourierLink}" style="color:#1a56db">${iss.CourierLink}</a></p>` : ''}
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   <p style="margin:2px 0"><strong>Date :</strong> ${currentDT}</p>
   <p style="margin:2px 0"><strong>Items Issue Date :</strong> ${issueDT}</p>
 
@@ -2405,6 +2560,7 @@ app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
   <p>Regards,<br><strong>Team Kisna</strong></p>
 </body></html>`;
 
+<<<<<<< HEAD
     // 8. Generate challan PDF and send email
     let pdfAttachment = null;
     try {
@@ -2433,13 +2589,20 @@ app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
       console.error('Challan PDF generation failed (email will still send):', pdfErr.message);
     }
 
+=======
+    // 8. Send email — TEST MODE: always send to ops mailbox
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     const toEmail = 'dataanalysis5@kisna.com';
     await mailer.sendMail({
       from: '"KISNA Inventory" <dataanalysis5@kisna.com>',
       to: toEmail,
       subject: 'Delivery Details for your Goods',
+<<<<<<< HEAD
       html: htmlBody,
       ...(pdfAttachment ? { attachments: [pdfAttachment] } : {})
+=======
+      html: htmlBody
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     });
 
     res.json({ success: true });
@@ -2449,7 +2612,11 @@ app.put('/api/issues/:id/track-and-email', requireAuth, async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // DELETE â€“ reverse stock and delete
+=======
+// DELETE – reverse stock and delete
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.delete('/api/issues/:id', requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);
   try {
@@ -2469,7 +2636,11 @@ app.delete('/api/issues/:id', requireAuth, async (req, res) => {
 
 // =================== ISSUE RETURN ===================
 
+<<<<<<< HEAD
 // GET all returns (with division derived via IssueReturnItem â†’ Item â†’ Division)
+=======
+// GET all returns (with division derived via IssueReturnItem → Item → Division)
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/issue-returns', requireAuth, async (req, res) => {
   try {
     const { divisionId } = req.query;
@@ -2542,7 +2713,11 @@ app.post('/api/issue-returns', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // â”€â”€ Dead Stock Identifier â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+=======
+// ── Dead Stock Identifier ────────────────────────────────────────────────────
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 // GET /api/dead-stock?days=90
 // Returns items with Stock > 0 but zero issues in the last N days (default 90).
 // "Never issued" items (NULL LastIssueDate) are also included.
@@ -2588,11 +2763,19 @@ app.get('/api/dead-stock', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // â”€â”€ Smart Order Suggestions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // GET /api/orders/suggestions
 // Analyses past order history to find items due for reorder based on:
 //   â€¢ Average quantity ordered  â€¢ Average gap between orders (days)
 //   â€¢ Most-frequently-used vendor   â€¢ Days since last order
+=======
+// ── Smart Order Suggestions ─────────────────────────────────────────────────
+// GET /api/orders/suggestions
+// Analyses past order history to find items due for reorder based on:
+//   • Average quantity ordered  • Average gap between orders (days)
+//   • Most-frequently-used vendor   • Days since last order
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/orders/suggestions', requireAuth, async (req, res) => {
   try {
     const r = await query(`
@@ -2660,7 +2843,11 @@ app.get('/api/orders/suggestions', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // Order Items â€” full grouped CRUD + bulk ops
+=======
+// Order Items — full grouped CRUD + bulk ops
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/orders', requireAuth, async (req, res) => {
   try {
     // Fetch all orders
@@ -2698,6 +2885,7 @@ app.get('/api/orders', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 
 async function _sendOrderEmail(orderId, isUpdate = false) {
   try {
@@ -2838,6 +3026,8 @@ async function _sendOrderEmail(orderId, isUpdate = false) {
   }
 }
 
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.post('/api/orders', requireAuth, async (req, res) => {
   const { OrderNumber, OrderDate, Vendorid, DivisionId, items } = req.body;
   const user = req.session.user?.loginId || 'admin';
@@ -2864,8 +3054,216 @@ app.post('/api/orders', requireAuth, async (req, res) => {
     }
     res.json({ success: true, OrderID: orderId });
 
+<<<<<<< HEAD
     // ── Fire-and-forget order email ────────────────────────────────
     _sendOrderEmail(orderId, false);
+=======
+    // ── Fire-and-forget order email ──────────────────────────────────
+    (async () => {
+      try {
+        // Fetch vendor + division details
+        const metaRes = await query(
+          `SELECT v.[Name] AS VendorName,
+                  v.[VendorEmail],
+                  v.[CompanyName],
+                  d.[DivisionName]
+           FROM   [Vendor]   v
+           CROSS JOIN [Division] d
+           WHERE  v.[vendorid]   = @vid
+             AND  d.[DivisionId] = @did`,
+          { vid: Vendorid || null, did: DivisionId || null }
+        );
+        const meta       = metaRes.recordset[0] || {};
+        const vendorName = meta.VendorName   || 'N/A';
+        const divName    = meta.DivisionName || 'N/A';
+
+        // Fetch items with names
+        const itemsRes = await query(
+          `SELECT c.[CategoryName], i.[ItemName], oi.[TotalQty]
+           FROM   [OrderItem] oi
+           LEFT JOIN [Item]     i ON oi.[ItemId]     = i.[itemid]
+           LEFT JOIN [Category] c ON oi.[CategoryId] = c.[CategoryId]
+           WHERE  oi.[OrderID] = @oid
+           ORDER BY oi.[OrderItemId]`,
+          { oid: orderId }
+        );
+        const emailItems = itemsRes.recordset || [];
+
+        const orderDateFmt = OrderDate
+          ? new Date(OrderDate).toLocaleDateString('en-IN',
+              { day: '2-digit', month: 'long', year: 'numeric' })
+          : new Date().toLocaleDateString('en-IN',
+              { day: '2-digit', month: 'long', year: 'numeric' });
+
+        const itemRows = emailItems.map((it, idx) => `
+          <tr style="background:${idx % 2 === 0 ? '#ffffff' : '#f8f9ff'}">
+            <td style="padding:11px 16px;border-bottom:1px solid #e8eaf0;
+                       color:#444;font-size:13px">${it.CategoryName || '—'}</td>
+            <td style="padding:11px 16px;border-bottom:1px solid #e8eaf0;
+                       font-weight:600;color:#1a1a2e;font-size:13px">${it.ItemName || '—'}</td>
+            <td style="padding:11px 16px;border-bottom:1px solid #e8eaf0;
+                       text-align:center;font-weight:700;color:#b8860b;
+                       font-size:14px">${it.TotalQty}</td>
+          </tr>`).join('');
+
+        const htmlBody = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body style="margin:0;padding:0;background:#f0f2f5;font-family:Arial,Helvetica,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0"
+         style="background:#f0f2f5;padding:32px 0">
+    <tr><td align="center">
+      <table width="620" cellpadding="0" cellspacing="0"
+             style="background:#ffffff;border-radius:12px;overflow:hidden;
+                    box-shadow:0 4px 24px rgba(0,0,0,0.10)">
+
+        <!-- Header -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);
+                     padding:32px 36px;text-align:center">
+            <div style="font-size:11px;letter-spacing:3px;color:#c9a227;
+                        text-transform:uppercase;margin-bottom:8px">KISNA Diamond Jewellery</div>
+            <div style="font-size:26px;font-weight:800;color:#ffffff;letter-spacing:1px">
+              ✦ Purchase Order
+            </div>
+            <div style="margin-top:10px;display:inline-block;background:rgba(201,162,39,0.18);
+                        border:1px solid #c9a227;border-radius:20px;padding:5px 20px;
+                        color:#c9a227;font-size:13px;font-weight:600;letter-spacing:1px">
+              Order ID&nbsp;&nbsp;#${orderId}${OrderNumber ? '&nbsp;&nbsp;|&nbsp;&nbsp;' + OrderNumber : ''}
+            </div>
+          </td>
+        </tr>
+
+        <!-- Order Meta -->
+        <tr>
+          <td style="padding:28px 36px 8px">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="50%" style="padding-bottom:18px;vertical-align:top">
+                  <div style="font-size:10px;letter-spacing:2px;color:#999;
+                              text-transform:uppercase;margin-bottom:5px">Order Date</div>
+                  <div style="font-size:15px;font-weight:700;color:#1a1a2e">${orderDateFmt}</div>
+                </td>
+                <td width="50%" style="padding-bottom:18px;vertical-align:top">
+                  <div style="font-size:10px;letter-spacing:2px;color:#999;
+                              text-transform:uppercase;margin-bottom:5px">Division</div>
+                  <div style="font-size:15px;font-weight:700;color:#1a1a2e">${divName}</div>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" style="padding-bottom:18px;vertical-align:top">
+                  <div style="font-size:10px;letter-spacing:2px;color:#999;
+                              text-transform:uppercase;margin-bottom:5px">Vendor</div>
+                  <div style="font-size:15px;font-weight:700;color:#1a1a2e">${vendorName}</div>
+                  ${meta.CompanyName ? `<div style="font-size:12px;color:#777;margin-top:3px">${meta.CompanyName}</div>` : ''}
+                </td>
+                <td width="50%" style="padding-bottom:18px;vertical-align:top">
+                  <div style="font-size:10px;letter-spacing:2px;color:#999;
+                              text-transform:uppercase;margin-bottom:5px">Order Number</div>
+                  <div style="font-size:15px;font-weight:700;color:#1a1a2e">
+                    ${OrderNumber || '<span style="color:#bbb;font-weight:400;font-style:italic">—</span>'}
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr><td style="padding:0 36px">
+          <div style="height:2px;background:linear-gradient(90deg,#c9a227,#f5e6a3,#c9a227);
+                      border-radius:2px"></div>
+        </td></tr>
+
+        <!-- Items Table -->
+        <tr>
+          <td style="padding:24px 36px 8px">
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;
+                        color:#c9a227;font-weight:700;margin-bottom:14px">
+              &#9632; Items Ordered
+            </div>
+            <table width="100%" cellpadding="0" cellspacing="0"
+                   style="border-collapse:collapse;border-radius:8px;overflow:hidden;
+                          border:1px solid #e8eaf0">
+              <thead>
+                <tr style="background:#1a1a2e">
+                  <th style="padding:12px 16px;text-align:left;font-size:11px;
+                             letter-spacing:1.5px;text-transform:uppercase;
+                             color:#c9a227;font-weight:700;width:30%">Category</th>
+                  <th style="padding:12px 16px;text-align:left;font-size:11px;
+                             letter-spacing:1.5px;text-transform:uppercase;
+                             color:#c9a227;font-weight:700">Item Name</th>
+                  <th style="padding:12px 16px;text-align:center;font-size:11px;
+                             letter-spacing:1.5px;text-transform:uppercase;
+                             color:#c9a227;font-weight:700;width:80px">Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemRows || `<tr><td colspan="3" style="padding:16px;text-align:center;color:#aaa;font-style:italic">No items</td></tr>`}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Summary Bar -->
+        <tr>
+          <td style="padding:12px 36px 28px">
+            <div style="background:#f8f9ff;border-radius:8px;padding:14px 18px;
+                        display:flex;align-items:center;border-left:4px solid #c9a227">
+              <span style="font-size:13px;color:#555">
+                <strong style="color:#1a1a2e">${emailItems.length}</strong>
+                item type${emailItems.length !== 1 ? 's' : ''} &nbsp;|&nbsp;
+                <strong style="color:#1a1a2e">
+                  ${emailItems.reduce((s, i) => s + (i.TotalQty || 0), 0)}
+                </strong> total units ordered
+              </span>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr><td style="padding:0 36px">
+          <div style="height:1px;background:#e8eaf0"></div>
+        </td></tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:22px 36px;background:#fafafa;border-radius:0 0 12px 12px">
+            <div style="font-size:11px;color:#999;text-align:center;line-height:1.7">
+              This is an automated notification from
+              <strong style="color:#1a1a2e">KISNA Inventory Management System</strong>.<br/>
+              Please do not reply directly to this email.<br/>
+              <span style="font-size:10px;color:#bbb;margin-top:6px;display:block">
+                &#169; ${new Date().getFullYear()} KISNA Diamond Jewellery &mdash; All rights reserved.
+              </span>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+        const vendorEmail = (meta.VendorEmail || '').trim();
+        if (!vendorEmail) {
+          console.warn(`[Order Mail] No VendorEmail set for vendor "${vendorName}" — email skipped for Order #${orderId}`);
+        } else {
+          await mailer.sendMail({
+            from   : '"KISNA Inventory" <dataanalysis5@kisna.com>',
+            to     : vendorEmail,
+            cc     : 'dataanalysis5@kisna.com',
+            subject: `New Purchase Order #${orderId}${OrderNumber ? ' — ' + OrderNumber : ''} | ${divName} — ${vendorName}`,
+            html   : htmlBody
+          });
+          console.log(`[Order Mail] Sent for Order #${orderId} to vendor: ${vendorEmail} (CC: dataanalysis5@kisna.com)`);
+        }
+      } catch (mailErr) {
+        console.error(`[Order Mail] Failed for Order #${orderId}:`, mailErr.message);
+      }
+    })();
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -2891,8 +3289,11 @@ app.put('/api/orders/:orderId', requireAuth, async (req, res) => {
           qty, rate, amt: qty * rate, user
         });
     }
+<<<<<<< HEAD
     // ── Fire-and-forget order email for update ─────────────────────
     _sendOrderEmail(orderId, true);
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -2966,7 +3367,11 @@ app.get('/api/reports/item-stock', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // View Items Stock â€” calls sp_ViewItemsStock then optionally filters by DivisionId
+=======
+// View Items Stock — calls sp_ViewItemsStock then optionally filters by DivisionId
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/reports/sp-view-items-stock', requireAuth, async (req, res) => {
   try {
     const { divisionId } = req.query;
@@ -3080,7 +3485,11 @@ app.post('/api/reports/email-stock-report', requireAuth, async (req, res) => {
         </thead>
         <tbody>${rowsHtml}</tbody>
       </table>
+<<<<<<< HEAD
       ${totalItems > 20 ? `<p style="font-size:11px;color:#888;margin:8px 0 0">â€¦ and ${totalItems - 20} more items in the attached CSV file.</p>` : ''}
+=======
+      ${totalItems > 20 ? `<p style="font-size:11px;color:#888;margin:8px 0 0">… and ${totalItems - 20} more items in the attached CSV file.</p>` : ''}
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     </div>
     <!-- Footer -->
     <div style="padding:14px 22px;background:#f5f5f5;border-top:1px solid #eee;font-size:11px;color:#999;text-align:center">
@@ -3094,7 +3503,11 @@ app.post('/api/reports/email-stock-report', requireAuth, async (req, res) => {
     await mailer.sendMail({
       from: '"KISNA Inventory" <dataanalysis5@kisna.com>',
       to: 'dataanalysis5@kisna.com',
+<<<<<<< HEAD
       subject: `Items Stock Report â€“ ${divLabel} â€“ ${dateStr}`,
+=======
+      subject: `Items Stock Report – ${divLabel} – ${dateStr}`,
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       html: htmlBody,
       attachments: [{
         filename: csvFilename,
@@ -3110,7 +3523,11 @@ app.post('/api/reports/email-stock-report', requireAuth, async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // â”€â”€ CHALLAN REPORT ROUTES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+=======
+// ── CHALLAN REPORT ROUTES ──────────────────────────────────────────────
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 // GET /api/challan/issues?divisionId=1
 app.get('/api/challan/issues', requireAuth, async (req, res) => {
   try {
@@ -3143,7 +3560,11 @@ app.get('/api/challan/header', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // POST /api/challan/header/save  â€” archives once per IssueId
+=======
+// POST /api/challan/header/save  — archives once per IssueId
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.post('/api/challan/header/save', requireAuth, async (req, res) => {
   try {
     const d = req.body;
@@ -3187,7 +3608,11 @@ app.get('/api/challan/detail', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // POST /api/challan/detail/save  â€” archives product rows once per IssueId
+=======
+// POST /api/challan/detail/save  — archives product rows once per IssueId
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.post('/api/challan/detail/save', requireAuth, async (req, res) => {
   try {
     const { issueId, rows } = req.body;
@@ -3301,7 +3726,11 @@ app.put('/api/inward-return-pending/:id', requireAuth, async (req, res) => {
     if (!iri) return res.status(404).json({ error: 'Record not found' });
 
     if (updateStatus === 'Return Complete') {
+<<<<<<< HEAD
       // SP â†’ Scrap Complete (SC);  RP â†’ Return Complete (RC)
+=======
+      // SP → Scrap Complete (SC);  RP → Return Complete (RC)
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       const resolvedFlag = iri.ItemFlag === 'SP' ? 'SC' : 'RC';
       await query(
         `UPDATE [InwardReturnItem]
@@ -3407,7 +3836,11 @@ app.post('/api/return-issues-pending/resolve', requireAuth, async (req, res) => 
   if (!IssueReturnItemId) return res.status(400).json({ error: 'IssueReturnItemId required' });
   if (!UpdateStatusAs) return res.status(400).json({ error: 'UpdateStatusAs required' });
 
+<<<<<<< HEAD
   // Map UI value â†’ ItemFlag
+=======
+  // Map UI value → ItemFlag
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   const flagMap = { 'Return Complete': 'RC', 'Scrap Complete': 'SC', 'Complete': 'C' };
   const newFlag = flagMap[UpdateStatusAs];
   if (!newFlag) return res.status(400).json({ error: 'Invalid UpdateStatusAs value' });
@@ -3422,7 +3855,11 @@ app.post('/api/return-issues-pending/resolve', requireAuth, async (req, res) => 
     const row = rowRes.recordset[0];
     if (!row) return res.status(404).json({ error: 'IssueReturnItem not found' });
 
+<<<<<<< HEAD
     // Update IssueReturnItem â†’ new ItemFlag
+=======
+    // Update IssueReturnItem → new ItemFlag
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     await query(
       `UPDATE [IssueReturnItem]
        SET [ItemFlag]=@flag, [Reason]=@reason, [Remark]=@remark,
@@ -3433,7 +3870,11 @@ app.post('/api/return-issues-pending/resolve', requireAuth, async (req, res) => 
         user, id: parseInt(IssueReturnItemId)
       });
 
+<<<<<<< HEAD
     // If Return Complete â†’ also insert into IssueReturnItemToVendor
+=======
+    // If Return Complete → also insert into IssueReturnItemToVendor
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     if (newFlag === 'RC') {
       // Sanitise: courier fields must be NULL when ReturnMode is 'Hand'
       const isHandMode = (ReturnMode || '').toLowerCase() === 'hand';
@@ -3463,7 +3904,11 @@ app.post('/api/return-issues-pending/resolve', requireAuth, async (req, res) => 
         });
     }
 
+<<<<<<< HEAD
     // If Complete â†’ restore stock (add ReturnQty back to Item.Stock)
+=======
+    // If Complete → restore stock (add ReturnQty back to Item.Stock)
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     if (newFlag === 'C') {
       await query(
         'UPDATE [Item] SET [Stock]=ISNULL([Stock],0)+@qty WHERE [Itemid]=@itmid',
@@ -3484,10 +3929,14 @@ app.get('/api/issue-pending', requireAuth, async (req, res) => {
     let q = `
       SELECT DISTINCT iss.[IssueId], iss.[RequestId], iss.[RequestByEmpId],
              iss.[IsIssueClose], iss.[RequestMode], iss.[DivisionId],
+<<<<<<< HEAD
              iss.[IssueDate], iss.[DistCode],
              iss.[DeliverMode], iss.[DeliverByPersonName],
              iss.[CourierId], iss.[CourierName],
              iss.[CourierPersonMob], iss.[CourierPersonLocation]
+=======
+             iss.[IssueDate], iss.[DistCode]
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       FROM [Issue] iss
       INNER JOIN [IssueItem] ii ON iss.[IssueId] = ii.[IssueId]
       WHERE iss.[IsIssueClose]='Open'
@@ -3598,7 +4047,11 @@ app.post('/api/issue-pending/resolve', requireAuth, async (req, res) => {
         'UPDATE [Item] SET [Stock]=ISNULL([Stock],0)-@qty WHERE [Itemid]=@itmid',
         { qty: pendQty, itmid: oldItem.ItemId });
 
+<<<<<<< HEAD
       // Update old IssueItem â†’ ItemFlag = 'C'
+=======
+      // Update old IssueItem → ItemFlag = 'C'
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       await query(
         `UPDATE [IssueItem] SET [ItemFlag]='C',[ModifyBy]=@user,[ModifyDate]=GETDATE()
          WHERE [IssueItemId]=@id`,
@@ -3624,7 +4077,11 @@ app.post('/api/issue-pending/resolve', requireAuth, async (req, res) => {
 
 
 
+<<<<<<< HEAD
 // â”€â”€ Inventory Report: Inward â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+=======
+// ── Inventory Report: Inward ──────────────────────────────────────────
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/inventory-report/inward', async (req, res) => {
   const { divisionId, fromDate, toDate, dateMode } = req.query;
   const divId = parseInt(divisionId) || 0;
@@ -3640,7 +4097,11 @@ app.get('/api/inventory-report/inward', async (req, res) => {
   const sql = `
     SELECT mst.OrderNumber, mst.DCNumber, mst.InvoiceNumber,
            FORMAT(mst.InwardDate,'dd-MM-yyyy') AS InwardDate,
+<<<<<<< HEAD
            v.[CompanyName] AS VendorName, c.CategoryName, i.ItemName,
+=======
+           v.[Name] AS VendorName, c.CategoryName, i.ItemName,
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
            dtl.TotalQty, dtl.DCQty
     FROM   Inventorybkp.dbo.Inward mst
     JOIN   Inventorybkp.dbo.InwardItem dtl ON mst.InwardId  = dtl.InwardId
@@ -3655,6 +4116,7 @@ app.get('/api/inventory-report/inward', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+<<<<<<< HEAD
 // ─── Approval Sheet: auto-create DB tables ───────────────────────────────
 async function _ensureApprovalSheetTables() {
   try {
@@ -3904,6 +4366,9 @@ app.get('/api/approval-sheets/:id/pdf', requireAuth, async (req, res) => {
 });
 
 // ─── Inventory Report: Outward ──────────────────────────────────────────
+=======
+// ── Inventory Report: Outward ─────────────────────────────────────────
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 app.get('/api/inventory-report/outward', async (req, res) => {
   const { divisionId, fromDate, toDate, dateMode } = req.query;
   const divId = parseInt(divisionId) || 0;
@@ -3917,7 +4382,11 @@ app.get('/api/inventory-report/outward', async (req, res) => {
     params.toDate = toDate;
   }
   const sql = `
+<<<<<<< HEAD
     SELECT mst.IssueId AS ChallanNo, dlr.DistCode, dlr.DealerCompanyName, dlr.ContactPersonName,
+=======
+    SELECT mst.IssueId AS ChallanNo, dlr.DealerCompanyName, dlr.ContactPersonName,
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
            dlr.Addr1, dlr.Addr2, dlr.Addr3, dlr.Mobile, dlr.GST,
            dlr.PlaceOfSalesPromotion, mst.RequestMode, mst.DeliverMode,
            mst.DeliverByPersonName, mst.CourierName, mst.TrackId,
@@ -3941,6 +4410,7 @@ app.get('/{*path}', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+<<<<<<< HEAD
 // â”€â”€ Global error handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Catches any unhandled Express errors and returns JSON (never an HTML page).
 // Without this, Express sends a default HTML 500 that the api() function
@@ -3949,6 +4419,14 @@ app.use((err, req, res, next) => {
   console.error('[GlobalError]', req.method, req.path, err.message);
   // Guard: if response was already sent (e.g. session EPERM race on Windows), just log and stop.
   if (res.headersSent) return next(err);
+=======
+// ── Global error handler ───────────────────────────────────────────────────
+// Catches any unhandled Express errors and returns JSON (never an HTML page).
+// Without this, Express sends a default HTML 500 that the api() function
+// can't parse → body becomes {} → data.error=undefined → "Request failed".
+app.use((err, req, res, next) => {
+  console.error('[GlobalError]', req.method, req.path, err.message);
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   res.status(err.status || 500).json({
     error: err.message || 'Internal server error'
   });
@@ -3956,6 +4434,9 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Inventory Web App running at http://localhost:${PORT}`);
+<<<<<<< HEAD
   _ensureApprovalSheetTables();
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 });
 

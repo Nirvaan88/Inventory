@@ -135,7 +135,11 @@ window._pageBinders['purchase-inward'] = async () => {
   if (venSel) _iwVendors.forEach(v => venSel.insertAdjacentHTML('beforeend',
     `<option value="${v.vendorid || v.VendorID}" data-company="${v.CompanyName || ""}">${(v.Name || v.VendorName) + (v.CompanyName ? " (" + v.CompanyName + ")" : "")}</option>`));
 
+<<<<<<< HEAD
   // Division change â†’ reset lines if any, then re-fetch items for new div+vendor
+=======
+  // Division change → reset lines if any, then re-fetch items for new div+vendor
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   if (divSel) divSel.onchange = async () => {
     const newDivId = divSel.value;
     if (_iwLines.length > 0) {
@@ -156,7 +160,11 @@ window._pageBinders['purchase-inward'] = async () => {
     _iwRenderItemPanel();
   };
 
+<<<<<<< HEAD
   // Vendor change â†’ load items filtered by vendor + current division
+=======
+  // Vendor change → load items filtered by vendor + current division
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   if (venSel) venSel.onchange = async () => {
     const vid = venSel.value;
     const divId = divSel?.value || '';
@@ -200,7 +208,11 @@ window._pageBinders['purchase-inward'] = async () => {
 /* ---- Item Entry Panel ---- */
 function _iwRenderItemPanel() {
   const panel = $('#iw-item-panel'); if (!panel) return;
+<<<<<<< HEAD
   // View Records mode â€” lock the Item Entry section entirely
+=======
+  // View Records mode — lock the Item Entry section entirely
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   if (_iwEditId !== null) {
     panel.innerHTML = `<div style="display:flex;align-items:center;gap:12px;padding:18px 16px;
         background:rgba(100,100,100,.07);border-radius:8px;border:1px dashed var(--border)">
@@ -287,7 +299,11 @@ function _iwRenderItemPanel() {
     const r = parseFloat($('#iwf-rate')?.value) || 0;
     const a = $('#iwf-amt'); if (a) a.value = (q * r).toFixed(2);
   };
+<<<<<<< HEAD
   // Item Qty â‰¤ DC Qty â€” real-time inline validation
+=======
+  // Item Qty ≤ DC Qty — real-time inline validation
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   const _iwValidateItemQty = () => {
     const dc = parseInt($('#iwf-dcqty')?.value) || 0;
     const q = parseInt($('#iwf-qty')?.value) || 0;
@@ -424,7 +440,11 @@ function _iwRenderPreview() {
   }
   tbody.innerHTML = _iwLines.map((l, i) => {
     const rowBg = _iwEditingIndex === i ? 'background:rgba(99,102,241,.12);' : '';
+<<<<<<< HEAD
     // View Records mode â†’ read-only rows (locked)
+=======
+    // View Records mode → read-only rows (locked)
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     if (_iwEditId !== null) {
       return `<tr style="border-bottom:1px solid var(--border);background:rgba(100,100,100,.04)">
       <td style="padding:6px 8px;text-align:center;color:var(--text-muted)">${i + 1}</td>
@@ -443,7 +463,11 @@ function _iwRenderPreview() {
       <td style="padding:6px 8px;text-align:center;font-size:11px">${l.ReturnDate || '&#8212;'}</td>
       <td style="padding:6px 8px;font-size:11px">${l.TrackId || '&#8212;'}</td>
       <td style="padding:6px 8px;text-align:center">
+<<<<<<< HEAD
         <i class="fas fa-lock" style="color:var(--text-muted);font-size:12px" title="Inwarded â€” read only"></i>
+=======
+        <i class="fas fa-lock" style="color:var(--text-muted);font-size:12px" title="Inwarded — read only"></i>
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       </td>
     </tr>`;
     }
@@ -509,7 +533,11 @@ window._iwOpenVendorSearch = () => {
         style="width:100%;box-sizing:border-box;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
                background:var(--bg-dark);color:var(--text-primary);font-size:13px;margin-bottom:12px"/>
       <div id="iw-vnd-list" style="max-height:340px;overflow-y:auto;border:1px solid var(--border);border-radius:8px">
+<<<<<<< HEAD
         <div style="padding:18px;text-align:center;color:var(--text-muted);font-size:13px">Loadingâ€¦</div>
+=======
+        <div style="padding:18px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       </div>
     </div>`;
 
@@ -557,7 +585,11 @@ window._iwOpenVendorSearch = () => {
 };
 
 window._iwSelectPreviewRow = (i) => {
+<<<<<<< HEAD
   // Locked in View-Records mode â€” inwarded items must not be modified
+=======
+  // Locked in View-Records mode — inwarded items must not be modified
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   if (_iwEditId !== null) {
     showToast('This record has already been inwarded and cannot be edited.', 'warning');
     return;
@@ -683,6 +715,7 @@ async function _iwShowRecords() {
   const ov = document.createElement('div');
   ov.className = 'modal-overlay'; ov.id = 'iw-records-modal';
   ov.innerHTML = `
+<<<<<<< HEAD
     <div class="modal" style="max-width:980px;animation:slideUp 0.2s ease">
       <div class="modal-header">
         <h3><i class="fas fa-table-list"></i> Purchase Inward Records</h3>
@@ -692,6 +725,13 @@ async function _iwShowRecords() {
           <button class="btn-close-modal" onclick="document.getElementById('iw-records-modal').remove()">
             <i class="fas fa-xmark"></i></button>
         </div>
+=======
+    <div class="modal" style="max-width:900px;animation:slideUp 0.2s ease">
+      <div class="modal-header">
+        <h3><i class="fas fa-table-list"></i> Purchase Inward Records</h3>
+        <button class="btn-close-modal" onclick="document.getElementById('iw-records-modal').remove()">
+          <i class="fas fa-xmark"></i></button>
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       </div>
       <div class="modal-body">
         <div class="search-bar" style="margin-bottom:12px">
@@ -700,7 +740,11 @@ async function _iwShowRecords() {
           </div>
         </div>
         <div style="overflow-x:auto;max-height:500px;overflow-y:auto">
+<<<<<<< HEAD
           <table style="width:100%;border-collapse:collapse;min-width:780px;font-size:13px" id="tbl-iw-records">
+=======
+          <table style="width:100%;border-collapse:collapse;min-width:700px;font-size:13px" id="tbl-iw-records">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
             <thead style="background:var(--bg-dark);position:sticky;top:0;z-index:2">
               <tr>
                 <th style="padding:10px 12px;text-align:left">Inward ID</th>
@@ -710,11 +754,18 @@ async function _iwShowRecords() {
                 <th style="padding:10px 12px;text-align:left">Inward Date</th>
                 <th style="padding:10px 12px;text-align:left">Vendor Name</th>
                 <th style="padding:10px 12px;text-align:left">Division</th>
+<<<<<<< HEAD
                 <th style="padding:10px 12px;text-align:center;min-width:60px">ASP</th>
               </tr>
             </thead>
             <tbody id="tbl-iw-rec-body">
               <tr class="empty-row"><td colspan="8" style="padding:20px;text-align:center">
+=======
+              </tr>
+            </thead>
+            <tbody id="tbl-iw-rec-body">
+              <tr class="empty-row"><td colspan="7" style="padding:20px;text-align:center">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
                 <div class="spinner" style="margin:0 auto"></div></td></tr>
             </tbody>
           </table>
@@ -724,17 +775,21 @@ async function _iwShowRecords() {
   document.body.appendChild(ov);
   ov.onclick = e => { if (e.target === ov) ov.remove(); };
 
+<<<<<<< HEAD
   // Wire the pale-yellow Approval Sheet button — close modal and open full-screen
   document.getElementById('iw-rec-asp-btn').onclick = () => {
     ov.remove();
     _iwShowApprovalSheet();
   };
 
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   try {
     const data = await api('/api/inward');
     const tbody = document.getElementById('tbl-iw-rec-body');
     if (!tbody) return;
     if (!data.length) {
+<<<<<<< HEAD
       tbody.innerHTML = `<tr class="empty-row"><td colspan="8" style="padding:20px;text-align:center">No records found.</td></tr>`;
     } else {
       tbody.innerHTML = data.map(d => {
@@ -763,6 +818,21 @@ async function _iwShowRecords() {
             ${aspCell}
           </tr>`;
       }).join('');
+=======
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="7" style="padding:20px;text-align:center">No records found.</td></tr>`;
+    } else {
+      tbody.innerHTML = data.map(d => `
+        <tr style="border-bottom:1px solid var(--border);cursor:pointer" title="Double-click to load for edit"
+          ondblclick="_iwLoadRecordForEdit(${d.InwardId})">
+          <td style="padding:8px 12px;font-weight:600;color:var(--accent)">${d.InwardId}</td>
+          <td style="padding:8px 12px">${d.OrderNumber || '&#8212;'}</td>
+          <td style="padding:8px 12px">${d.DCNumber || '&#8212;'}</td>
+          <td style="padding:8px 12px">${d.InvoiceNumber || '&#8212;'}</td>
+          <td style="padding:8px 12px">${fmtDate(d.InwardDate)}</td>
+          <td style="padding:8px 12px">${d.VendorName || '&#8212;'}</td>
+          <td style="padding:8px 12px">${d.DivisionName || '&#8212;'}</td>
+        </tr>`).join('');
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     }
     // Search filter
     const searchEl = document.getElementById('iw-rec-search');
@@ -774,11 +844,16 @@ async function _iwShowRecords() {
     };
   } catch (e) {
     const tb = document.getElementById('tbl-iw-rec-body');
+<<<<<<< HEAD
     if (tb) tb.innerHTML = `<tr class="empty-row"><td colspan="8" style="color:var(--danger);padding:20px;text-align:center">
+=======
+    if (tb) tb.innerHTML = `<tr class="empty-row"><td colspan="7" style="color:var(--danger);padding:20px;text-align:center">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       Failed: ${e.message}</td></tr>`;
   }
 }
 
+<<<<<<< HEAD
 
 /* ---- View Existing Approval Sheet (from ASP icon in records) ---- */
 window._iwViewApprovalSheet = async (sheetId) => {
@@ -1358,6 +1433,8 @@ function _iwBuildApprovalHtml(sheet, inwards, timestamp, editable) {
 }
 
 
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 window._iwLoadRecordForEdit = async (id) => {
   const modal = document.getElementById('iw-records-modal');
   if (modal) modal.remove();
@@ -1387,13 +1464,21 @@ window._iwLoadRecordForEdit = async (id) => {
       CourierName: '', CourierId: '', ReturnDate: '', TrackId: ''
     }));
     _iwRenderPreview(); _iwRenderItemPanel();
+<<<<<<< HEAD
     // Lock all Inward Detail inputs â€” view mode only
+=======
+    // Lock all Inward Detail inputs — view mode only
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     ['#iw-vendor', '#iw-div', '#iw-order-num', '#iw-dc-num', '#iw-inv-num', '#iw-date'].forEach(sel => {
       const el = $(sel); if (!el) return;
       el.disabled = true; el.style.opacity = '0.6'; el.style.cursor = 'not-allowed';
     });
     const saveBtnV = $('#btn-iw-save');
+<<<<<<< HEAD
     if (saveBtnV) { saveBtnV.disabled = true; saveBtnV.style.opacity = '0.4'; saveBtnV.title = 'View mode â€” cannot save'; }
+=======
+    if (saveBtnV) { saveBtnV.disabled = true; saveBtnV.style.opacity = '0.4'; saveBtnV.title = 'View mode — cannot save'; }
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     showToast(`Loaded Inward #${id} for editing`, 'success');
   } catch (e) { showToast('Failed to load: ' + e.message, 'error'); }
 };
@@ -1565,6 +1650,7 @@ window._pageBinders['issue-items'] = async () => {
   if (courierSel) _issCouriers.forEach(c =>
     courierSel.insertAdjacentHTML('beforeend',
       `<option value="${c.CourierID || c.CourierId}">${c.Name || c.CourierName}</option>`));
+<<<<<<< HEAD
   // Courier change â†’ update Mobile Number
   if (courierSel) courierSel.onchange = () => {
     const cid = courierSel.value;
@@ -1572,6 +1658,8 @@ window._pageBinders['issue-items'] = async () => {
     const mobEl = $('#iss-cmob');
     if (mobEl && courier) mobEl.value = courier.Mob || '';
   };
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
   // Division change &#8594; reload dealers + items
   if (divSel) divSel.onchange = async () => {
@@ -1594,7 +1682,11 @@ window._pageBinders['issue-items'] = async () => {
     _issPopulateItems();
   };
 
+<<<<<<< HEAD
   // Distrib change &#8594; update items + auto-fill Deliver Mode & Courier from dealer
+=======
+  // Distrib change &#8594; update items
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   const distSel = $('#iss-dist');
   if (distSel) distSel.onchange = () => {
     _issCurrentDistCode = distSel.value || null;
@@ -1602,11 +1694,14 @@ window._pageBinders['issue-items'] = async () => {
     const dealer = _issDealers.find(d => d.DistCode === distSel.value);
     _issCurrentDealerID = dealer ? (dealer.DealerID || null) : null;
     _issPopulateItems();
+<<<<<<< HEAD
     // Auto-set Deliver Mode to Courier and populate courier from dealer's default
     if (distSel.value) {
       const delModeEl = $('#iss-delmode');
       if (delModeEl) { delModeEl.value = 'Courier'; _issApplyDelMode(); }
     }
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   };
 
   // Distributor search button
@@ -1682,11 +1777,16 @@ function _issValidateQtys() {
     if (!errEl) {
       errEl = document.createElement('div');
       errEl.id = 'iss-reqqty-err';
+<<<<<<< HEAD
       errEl.style.cssText = 'color:var(--danger);font-size:11px;position:absolute;bottom:-16px;left:0;white-space:nowrap;z-index:5';
       if (reqInput.parentElement) {
         reqInput.parentElement.style.position = 'relative';
         reqInput.parentElement.appendChild(errEl);
       }
+=======
+      errEl.style.cssText = 'color:var(--danger);font-size:11px;margin-top:2px;min-height:14px';
+      reqInput.parentElement?.appendChild(errEl);
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     }
     errEl.textContent = reqErr;
   }
@@ -1699,11 +1799,16 @@ function _issValidateQtys() {
     if (!errEl) {
       errEl = document.createElement('div');
       errEl.id = 'iss-issqty-err';
+<<<<<<< HEAD
       errEl.style.cssText = 'color:var(--danger);font-size:11px;position:absolute;bottom:-16px;left:0;white-space:nowrap;z-index:5';
       if (issInput.parentElement) {
         issInput.parentElement.style.position = 'relative';
         issInput.parentElement.appendChild(errEl);
       }
+=======
+      errEl.style.cssText = 'color:var(--danger);font-size:11px;margin-top:2px;min-height:14px';
+      issInput.parentElement?.appendChild(errEl);
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     }
     errEl.textContent = issErr;
   }
@@ -1783,6 +1888,7 @@ function _issApplyDelMode() {
   _issSetField('#iss-pname', isHand);
   ['#iss-courier', '#iss-cmob', '#iss-tid', '#iss-cloc'].forEach(id => _issSetField(id, isCourier));
   if (!isHand) { const p = $('#iss-pname'); if (p) p.value = ''; }
+<<<<<<< HEAD
   if (!isCourier) {
     ['#iss-courier', '#iss-cmob', '#iss-tid', '#iss-cloc'].forEach(id => { const el = $(id); if (el) el.value = ''; });
   } else {
@@ -1803,6 +1909,9 @@ function _issAutoFillCourierFromDealer() {
   // Auto-fill mobile
   const mobEl = $('#iss-cmob');
   if (mobEl && courier) mobEl.value = courier.Mob || '';
+=======
+  if (!isCourier) { ['#iss-courier', '#iss-cmob', '#iss-tid', '#iss-cloc'].forEach(id => { const el = $(id); if (el) el.value = ''; }); }
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 }
 
 function _issReset() {
@@ -1864,19 +1973,30 @@ async function _issSave() {
 }
 
 async function _issUpdateTrack() {
+<<<<<<< HEAD
+=======
+  // Remove any old modal
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   document.getElementById('iss-track-modal')?.remove();
 
   const ov = document.createElement('div');
   ov.className = 'modal-overlay'; ov.id = 'iss-track-modal';
+<<<<<<< HEAD
   ov.style.cssText = 'z-index:9998';
   ov.innerHTML = `
     <div class="modal" style="max-width:1700px;width:99vw;height:94vh;display:flex;flex-direction:column;padding:0">
       <!-- Header -->
       <div class="modal-header" style="flex-shrink:0;border-radius:12px 12px 0 0">
+=======
+  ov.innerHTML = `
+    <div class="modal" style="max-width:1150px;width:96vw">
+      <div class="modal-header">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         <h3><i class="fas fa-location-dot"></i>&nbsp; Update Track ID</h3>
         <button class="btn-close-modal" onclick="document.getElementById('iss-track-modal').remove()">
           <i class="fas fa-xmark"></i></button>
       </div>
+<<<<<<< HEAD
       <!-- Two-column body -->
       <div style="display:flex;flex:1;overflow:hidden;border-radius:0 0 12px 12px">
 
@@ -1963,19 +2083,74 @@ async function _issUpdateTrack() {
               </div>
             </div>
           </div>
+=======
+      <div class="modal-body" style="padding:0">
+        <!-- Grid -->
+        <div style="overflow:auto;max-height:360px;border-bottom:1px solid var(--border)">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead style="background:var(--bg-dark);position:sticky;top:0;color:var(--text-primary)">
+              <tr>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Issue ID</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Dealer Company Name</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Courier Name</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Location</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Delivery Mode</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Issue Date</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Track ID</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Requested By</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Request ID</th>
+                <th style="padding:8px 10px;text-align:left;white-space:nowrap">Request Mode</th>
+              </tr>
+            </thead>
+            <tbody id="iss-track-tbody">
+              <tr><td colspan="10" style="padding:40px;text-align:center">
+                <div class="spinner" style="margin:0 auto"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Update form below grid -->
+        <div style="padding:18px 20px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;border-top:1px solid var(--border)">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Issue ID</label>
+            <input type="text" id="trk-issue-id" readonly
+              style="width:110px;padding:7px 10px;border:1px solid var(--border);border-radius:4px;
+                     background:var(--bg-secondary);color:var(--text-muted);font-size:13px"
+              placeholder="Click a row&#8230;"/>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">
+              Track ID <span style="color:var(--danger)">*</span>
+            </label>
+            <input type="text" id="trk-track-id"
+              style="width:240px;padding:7px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px"
+              placeholder="Enter new Track ID"/>
+          </div>
+          <button id="btn-trk-update" class="btn btn-success" style="padding:8px 22px;font-size:13px">
+            <i class="fas fa-paper-plane"></i>&nbsp; Update &amp; Send Mail
+          </button>
+          <div id="trk-status-msg" style="font-size:12px;color:var(--text-muted)"></div>
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         </div>
       </div>
     </div>`;
   document.body.appendChild(ov);
   ov.onclick = e => { if (e.target === ov) ov.remove(); };
 
+<<<<<<< HEAD
   let _trkSelId = null, _trkSelDistCode = '', _trkSelDeliverMode = '';
 
   // -- Load issues grid --------------------------------------------------
+=======
+  let _trkSelId = null;
+
+  // -- Load issues grid ------------------------------------------
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   try {
     const issues = await api('/api/issues');
     const tbody = document.getElementById('iss-track-tbody');
     if (!tbody) return;
+<<<<<<< HEAD
     if (!issues.length) {
       tbody.innerHTML = `<tr><td colspan="5" style="padding:30px;text-align:center;color:var(--text-muted)">No issues found.</td></tr>`;
     } else {
@@ -2089,11 +2264,100 @@ async function _issUpdateTrack() {
     } catch (e) {
       showToast('Failed: ' + e.message, 'error');
       if (msg) msg.textContent = `âŒ Error: ${e.message}`;
+=======
+
+    if (!issues.length) {
+      tbody.innerHTML = `<tr><td colspan="10" style="padding:30px;text-align:center;color:var(--text-muted)">No issues found.</td></tr>`;
+    } else {
+      const fmtDT = (raw) => {
+        if (!raw) return '&#8212;';
+        const d = new Date(raw);
+        if (isNaN(d)) return raw;
+        const p = n => String(n).padStart(2, '0');
+        return `${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+      };
+      tbody.innerHTML = issues.map((r, i) => {
+        const bg = i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-secondary)';
+        return `<tr data-id="${r.IssueId}" data-tid="${r.TrackId || ''}" data-bg="${bg}"
+            class="trk-row" style="cursor:pointer;background:${bg}">
+          <td style="padding:6px 10px;font-weight:600;color:var(--accent)">${r.IssueId}</td>
+          <td style="padding:6px 10px">${r.DealerCompanyName || '&#8212;'}</td>
+          <td style="padding:6px 10px">${r.CourierName || '&#8212;'}</td>
+          <td style="padding:6px 10px">${r.CourierPersonLocation || '&#8212;'}</td>
+          <td style="padding:6px 10px">${r.DeliverMode || '&#8212;'}</td>
+          <td style="padding:6px 10px;white-space:nowrap">${fmtDT(r.IssueDate)}</td>
+          <td style="padding:6px 10px">${r.TrackId || '&#8212;'}</td>
+          <td style="padding:6px 10px">${r.RequestByEmpName || r.RequestByEmpId || '&#8212;'}</td>
+          <td style="padding:6px 10px">${r.RequestId || '&#8212;'}</td>
+          <td style="padding:6px 10px">${r.RequestMode || '&#8212;'}</td>
+        </tr>`;
+      }).join('');
+
+      // Hover + click on rows
+      tbody.querySelectorAll('.trk-row').forEach(row => {
+        const origBg = row.dataset.bg;
+        row.onmouseover = () => { if (row.dataset.selected !== '1') row.style.background = 'var(--hover-bg)'; };
+        row.onmouseout = () => { if (row.dataset.selected !== '1') row.style.background = origBg; };
+        row.onclick = () => {
+          // Deselect all
+          tbody.querySelectorAll('.trk-row').forEach(r => {
+            r.dataset.selected = '0';
+            r.style.background = r.dataset.bg;
+          });
+          // Select this row
+          row.dataset.selected = '1';
+          row.style.background = 'rgba(var(--accent-rgb,42,90,186),.18)';
+          _trkSelId = row.dataset.id;
+          const idEl = document.getElementById('trk-issue-id');
+          const tidEl = document.getElementById('trk-track-id');
+          if (idEl) idEl.value = _trkSelId;
+          if (tidEl) { tidEl.value = row.dataset.tid !== '&#8212;' ? row.dataset.tid : ''; tidEl.focus(); }
+          const msg = document.getElementById('trk-status-msg');
+          if (msg) msg.textContent = `Issue #${_trkSelId} selected &#8212; enter Track ID above.`;
+        };
+      });
+    }
+  } catch (e) {
+    showToast('Failed to load issues: ' + e.message, 'error');
+  }
+
+  // -- Update button ----------------------------------------------
+  const btnUpd = document.getElementById('btn-trk-update');
+  if (btnUpd) btnUpd.onclick = async () => {
+    if (!_trkSelId) return showToast('Please click on an issue row first', 'error');
+    const tid = document.getElementById('trk-track-id')?.value?.trim();
+    if (!tid) return showToast('Please enter a Track ID', 'error');
+
+    btnUpd.disabled = true;
+    btnUpd.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Updating&#8230;';
+    const msg = document.getElementById('trk-status-msg');
+    try {
+      await api(`/api/issues/${_trkSelId}/track-and-email`, {
+        method: 'PUT', body: { TrackId: tid }
+      });
+      if (msg) msg.textContent = `&#x2705; Track ID updated & delivery email sent for Issue #${_trkSelId}`;
+      showToast(`Track ID updated & email sent for Issue #${_trkSelId}`, 'success');
+      // Refresh the row we just updated
+      const updRow = document.querySelector(`#iss-track-tbody .trk-row[data-id="${_trkSelId}"]`);
+      if (updRow) {
+        updRow.dataset.tid = tid;
+        updRow.cells[6].textContent = tid;  // Track ID column
+      }
+      _trkSelId = null;
+      const idEl = document.getElementById('trk-issue-id');
+      if (idEl) idEl.value = '';
+      const tidEl = document.getElementById('trk-track-id');
+      if (tidEl) tidEl.value = '';
+    } catch (e) {
+      showToast('Failed: ' + e.message, 'error');
+      if (msg) msg.textContent = `&#x274C; Error: ${e.message}`;
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     } finally {
       btnUpd.disabled = false;
       btnUpd.innerHTML = '<i class="fas fa-paper-plane"></i>&nbsp; Update &amp; Send Mail';
     }
   };
+<<<<<<< HEAD
 
   // -- Update Only (no email) ----------------------------------------------
   const btnOnly = document.getElementById('btn-trk-only');
@@ -2122,6 +2386,10 @@ async function _issUpdateTrack() {
 
 
 
+=======
+}
+
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 function _issShowDistSearch() {
   const divId = $('#iss-div')?.value;
   const ov = document.createElement('div');
@@ -2538,7 +2806,11 @@ registerPage('orders', () => {
   return `${pageHeader('Order Items', 'fa-file-invoice', 'Transactions / Order Items',
     `<button class="btn btn-primary" id="btn-add-order"><i class="fas fa-plus"></i> Add New Order</button>`)}
 
+<<<<<<< HEAD
   <!-- â”€â”€ Smart Suggestions Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+=======
+  <!-- ── Smart Suggestions Banner ─────────────────────────────────── -->
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   <div id="ord-suggest-wrap" style="margin-bottom:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;
                 background:linear-gradient(135deg,rgba(168,85,247,.08),rgba(99,102,241,.08));
@@ -2587,6 +2859,10 @@ registerPage('orders', () => {
           <th style="width:160px">Category</th>
           <th style="width:120px">Division</th>
           <th>Items (ID &#183; Name &#8211; Qty - Rate)</th>
+<<<<<<< HEAD
+=======
+          <th style="width:110px;text-align:right">Total Amt</th>
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
           <th style="width:80px;text-align:center">Actions</th>
         </tr></thead>
         <tbody id="tbl-ord-body">
@@ -2637,16 +2913,28 @@ window._pageBinders['orders'] = async () => {
   $('#btn-ord-bulk-delete').onclick = () => bulkDeleteOrders();
 };
 
+<<<<<<< HEAD
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SMART ORDER SUGGESTIONS
    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    Pattern-based reorder reminders derived from dbo.Order + dbo.OrderItem
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+=======
+/* ═══════════════════════════════════════════════════════════════════════
+   SMART ORDER SUGGESTIONS
+   ─────────────────────────────────────────────────────────────────────
+   Pattern-based reorder reminders derived from dbo.Order + dbo.OrderItem
+═══════════════════════════════════════════════════════════════════════ */
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 let _ordSuggestionsOpen = false;
 
 async function _ordLoadSuggestions() {
   const loadEl = $('#ord-sugg-loading');
+<<<<<<< HEAD
   if (loadEl) loadEl.textContent = 'Analysing historyâ€¦';
+=======
+  if (loadEl) loadEl.textContent = 'Analysing history…';
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   try {
     const data = await api('/api/orders/suggestions');
     if (loadEl) loadEl.textContent = '';
@@ -2678,7 +2966,11 @@ function _ordRenderSuggestions(data) {
       <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;
                   background:var(--bg-card);border-radius:10px;border:1px solid var(--border)">
         <i class="fas fa-circle-check" style="color:#22c55e;margin-right:6px"></i>
+<<<<<<< HEAD
         All items are on track â€” no reorders due right now.
+=======
+        All items are on track — no reorders due right now.
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       </div>`;
     return;
   }
@@ -2697,7 +2989,11 @@ function _ordRenderSuggestions(data) {
           : `Due in ${Math.abs(overdue)}d`;
         const lastDate = s.LastOrderDate
           ? new Date(s.LastOrderDate).toLocaleDateString('en-IN')
+<<<<<<< HEAD
           : 'â€”';
+=======
+          : '—';
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         return `
         <div style="background:var(--bg-card);border:1px solid ${isUrgent ? 'rgba(220,38,38,.3)' : 'rgba(168,85,247,.2)'};
                     border-radius:12px;padding:16px;position:relative;overflow:hidden;
@@ -2753,7 +3049,11 @@ function _ordRenderSuggestions(data) {
     </div>`;
 }
 
+<<<<<<< HEAD
 /* Quick Order modal â€” opens pre-filled from a suggestion card */
+=======
+/* Quick Order modal — opens pre-filled from a suggestion card */
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 window._ordSuggestionQuickOrder = (s) => {
   // If s came as HTML-encoded JSON string, decode it
   if (typeof s === 'string') { try { s = JSON.parse(s); } catch (_) { return; } }
@@ -2799,14 +3099,22 @@ window._ordSuggestionQuickOrder = (s) => {
             <label>Division</label>
             <select id="qo-div" style="background:var(--bg-dark);border:1px solid var(--border);
               border-radius:6px;padding:8px 12px;color:var(--text-primary);width:100%;font-size:13px">
+<<<<<<< HEAD
               <option value="">â€” Select â€”</option>${divOpts}
+=======
+              <option value="">— Select —</option>${divOpts}
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
             </select>
           </div>
           <div class="form-field">
             <label>Vendor</label>
             <select id="qo-vendor" style="background:var(--bg-dark);border:1px solid var(--border);
               border-radius:6px;padding:8px 12px;color:var(--text-primary);width:100%;font-size:13px">
+<<<<<<< HEAD
               <option value="">â€” Select â€”</option>${vendorOpts}
+=======
+              <option value="">— Select —</option>${vendorOpts}
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
             </select>
           </div>
         </div>
@@ -2827,7 +3135,11 @@ window._ordSuggestionQuickOrder = (s) => {
         </div>
         <div class="form-row cols-2" style="gap:12px">
           <div class="form-field">
+<<<<<<< HEAD
             <label>Rate (â‚¹) <span style="color:var(--text-muted);font-size:10.5px">(optional)</span></label>
+=======
+            <label>Rate (₹) <span style="color:var(--text-muted);font-size:10.5px">(optional)</span></label>
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
             <input type="number" id="qo-rate" value="0" min="0" step="0.01"
               style="background:var(--bg-dark);border:1px solid var(--border);border-radius:6px;
                      padding:8px 12px;color:var(--text-primary);width:100%;font-size:13px"/>
@@ -2865,7 +3177,11 @@ window._ordSuggestionQuickOrder = (s) => {
 
     const btn = document.getElementById('btn-qo-place');
     btn.disabled = true;
+<<<<<<< HEAD
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placingâ€¦';
+=======
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing…';
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
     // Auto-generate order number
     const now = new Date();
@@ -2912,11 +3228,19 @@ function updateOrdBulkBar() {
 
 async function loadOrders() {
   const tbody = $('#tbl-ord-body'); if (!tbody) return;
+<<<<<<< HEAD
   tbody.innerHTML = `<tr class="empty-row"><td colspan="6"><div class="spinner" style="margin:0 auto"></div></td></tr>`;
   let data;
   try { data = await api('/api/orders'); }
   catch (e) {
     tbody.innerHTML = `<tr class="empty-row"><td colspan="6" style="color:var(--danger)">
+=======
+  tbody.innerHTML = `<tr class="empty-row"><td colspan="7"><div class="spinner" style="margin:0 auto"></div></td></tr>`;
+  let data;
+  try { data = await api('/api/orders'); }
+  catch (e) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7" style="color:var(--danger)">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
       <i class="fas fa-circle-xmark"></i> Failed: ${e.message}</td></tr>`;
     return;
   }
@@ -2929,7 +3253,11 @@ async function loadOrders() {
     const catPills = cats.map(c =>
       `<span style="display:inline-block;padding:2px 8px;background:rgba(168,85,247,.15);
         color:#c084fc;border-radius:10px;font-size:11px;margin:1px">${c}</span>`).join('');
+<<<<<<< HEAD
     // Item pills: (ItemId) ItemName â€“ Qty
+=======
+    // Item pills: (ItemId) ItemName – Qty
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     const itemPills = items.map(it =>
       `<span style="display:inline-block;padding:3px 9px;background:rgba(99,102,241,.12);
         color:#818cf8;border-radius:10px;font-size:11px;margin:1px;white-space:nowrap">
@@ -4285,8 +4613,11 @@ window._pageBinders['issue-pending'] = async () => {
   if (courierSel) _ipCouriers.forEach(c =>
     courierSel.insertAdjacentHTML('beforeend',
       `<option value="${c.CourierID || c.CourierId}">${c.Name || c.CourierName}</option>`));
+<<<<<<< HEAD
   // Courier change â†’ update Mobile Number
   if (courierSel) courierSel.onchange = () => _ipAutoFillCourierMob();
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
   // Division &#8594; reload items + issues
   if (divSel) divSel.onchange = async () => {
@@ -4394,10 +4725,13 @@ async function _ipLoadPendingItems() {
   // Re-wire select-all
   const chkAll = $('#ip-chk-all');
   if (chkAll) chkAll.checked = false;
+<<<<<<< HEAD
   // When any item checkbox is first checked, auto-populate delivery details from original issue
   document.querySelectorAll('.ip-item-chk').forEach(chk => {
     chk.onchange = () => { if (chk.checked) _ipAutoFillDeliveryFromIssue(); };
   });
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 }
 
 function _ipClearItems() {
@@ -4416,6 +4750,7 @@ function _ipApplyDelMode() {
   _ipSetField('#ip-pname', isHand);
   ['#ip-courier', '#ip-cmob', '#ip-tid', '#ip-cloc'].forEach(id => _ipSetField(id, isCourier));
   if (!isHand) { const p = $('#ip-pname'); if (p) p.value = ''; }
+<<<<<<< HEAD
   if (!isCourier) {
     ['#ip-courier', '#ip-cmob', '#ip-tid', '#ip-cloc'].forEach(id => { const el = $(id); if (el) el.value = ''; });
   } else {
@@ -4457,6 +4792,9 @@ function _ipAutoFillCourierMob() {
   const courier   = _ipCouriers.find(c => String(c.CourierID || c.CourierId) === courierId);
   const mobEl     = $('#ip-cmob');
   if (mobEl && courier) mobEl.value = courier.Mob || '';
+=======
+  if (!isCourier) { ['#ip-courier', '#ip-cmob', '#ip-tid', '#ip-cloc'].forEach(id => { const el = $(id); if (el) el.value = ''; }); }
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 }
 
 function _ipReset() {

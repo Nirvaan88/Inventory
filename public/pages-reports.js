@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* ================================================
+=======
+﻿/* ================================================
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
    PAGES: Reports  (Challan / Stock / Inventory)
    ================================================ */
 
@@ -187,11 +191,14 @@ window._chalSelectRow = async (idx) => {
           </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+<<<<<<< HEAD
           <span style="background:rgba(255,215,0,.18);border:1px solid rgba(255,215,0,.4);color:#ffd580;
             padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.5px"
             title="All fields in the challan are editable. Changes stay local — not saved to DB.">
             <i class="fas fa-pen-to-square" style="font-size:10px"></i> Editable Preview
           </span>
+=======
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
           <button onclick="window._chalExport()"
             style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
                    color:#fff;padding:5px 14px;border-radius:6px;cursor:pointer;
@@ -264,6 +271,7 @@ window._chalSelectRow = async (idx) => {
 function _chalRender() {
   const h = _chalHeader || {};
   const rows = _chalDetail || [];
+<<<<<<< HEAD
   const totalPcs    = rows.reduce((s, r) => s + (Number(r.Pcs)    || 0), 0);
   const totalAmount = rows.reduce((s, r) => s + (Number(r.Amount) || 0), 0);
   let challanDateStr = _chalFmtDate(h.ChallanDate);
@@ -277,11 +285,25 @@ function _chalRender() {
       <td ${_CE} style="padding:5px 8px;border:1px solid #ccc;color:#000;font-weight:bold;outline:none;cursor:text">${r.ProdDesc || '-'}</td>
       <td ${_CE} style="padding:5px 8px;border:1px solid #ccc;text-align:center;color:#000;font-weight:bold;outline:none;cursor:text">${r.Pcs || 0}</td>
       <td ${_CE} style="padding:5px 8px;border:1px solid #ccc;text-align:right;color:#000;font-weight:bold;outline:none;cursor:text">${Number(r.Amount || 0).toFixed(0)}</td>
+=======
+  const totalPcs = rows.reduce((s, r) => s + (Number(r.Pcs) || 0), 0);
+  const totalAmount = rows.reduce((s, r) => s + (Number(r.Amount) || 0), 0);
+  // Format ChallanDate &#8211; SP returns DD-MM-YYYY (SQL style 105); ISO dates also handled
+  let challanDateStr = _chalFmtDate(h.ChallanDate);
+
+  const productRows = rows.map(r => `
+    <tr style="background:#fff">
+      <td style="padding:5px 8px;border:1px solid #ccc;text-align:center;background:#fff;color:#000;font-weight:bold">${r.SrlNo || r.srlno || ''}</td>
+      <td style="padding:5px 8px;border:1px solid #ccc;background:#fff;color:#000;font-weight:bold">${r.ProdDesc || '-'}</td>
+      <td style="padding:5px 8px;border:1px solid #ccc;text-align:center;background:#fff;color:#000;font-weight:bold">${r.Pcs || 0}</td>
+      <td style="padding:5px 8px;border:1px solid #ccc;text-align:right;background:#fff;color:#000;font-weight:bold">${Number(r.Amount || 0).toFixed(0)}</td>
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     </tr>`).join('');
 
   const page = $('#chl-report-page');
   if (!page) return;
   page.innerHTML = `
+<<<<<<< HEAD
   <style>
     #chl-report-page [contenteditable]:hover  { background:rgba(26,86,219,.04) !important; }
     #chl-report-page [contenteditable]:focus  { background:rgba(26,86,219,.07) !important; box-shadow:inset 0 0 0 1px rgba(26,86,219,.25); }
@@ -289,6 +311,10 @@ function _chalRender() {
   </style>
   <table class="chl-outer-table" style="width:100%;border:2px solid #333;border-collapse:collapse;font-size:11.5px;font-family:Arial,sans-serif">
     <!-- Title Row -->
+=======
+  <table style="width:100%;border:2px solid #333;border-collapse:collapse;font-size:11.5px;font-family:Arial,sans-serif">
+    <!-- -- Title Row -- -->
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     <tr>
       <td colspan="2" style="padding:10px 14px 8px;border-bottom:1px solid #999">
         <table style="width:100%;border-collapse:collapse">
@@ -305,9 +331,15 @@ function _chalRender() {
         </table>
       </td>
     </tr>
+<<<<<<< HEAD
     <!-- From / To -->
     <tr>
       <td ${_CE} style="width:50%;padding:9px 12px;vertical-align:top;border-right:1px solid #aaa;border-bottom:1px solid #aaa;color:#1a1a1a;line-height:1.7;outline:none;cursor:text">
+=======
+    <!-- -- From / To -- -->
+    <tr>
+      <td style="width:50%;padding:9px 12px;vertical-align:top;border-right:1px solid #aaa;border-bottom:1px solid #aaa;color:#1a1a1a;line-height:1.7">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         From,${h.FromCompanyName || ''}<br>
         ${h.FromAddr1 || ''}<br>
         ${h.FromAddr2 || ''}<br>
@@ -317,7 +349,11 @@ function _chalRender() {
         GST No.${h.FromGSTNo || ''}<br>
         PAN:${h.FromPAN || ''}
       </td>
+<<<<<<< HEAD
       <td ${_CE} style="width:50%;padding:9px 12px;vertical-align:top;border-bottom:1px solid #aaa;color:#1a1a1a;line-height:1.7;outline:none;cursor:text">
+=======
+      <td style="width:50%;padding:9px 12px;vertical-align:top;border-bottom:1px solid #aaa;color:#1a1a1a;line-height:1.7">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         To,<br>
         ${h.ToCompanyName || ''}<br>
         ${h.ToPersonName || ''}<br>
@@ -327,16 +363,26 @@ function _chalRender() {
         GST No.${h.ToGSTNo || ''}
       </td>
     </tr>
+<<<<<<< HEAD
     <!-- Challan No / Place of Sales Promotion -->
     <tr>
       <td ${_CE} style="padding:8px 12px;border-right:1px solid #aaa;border-bottom:1px solid #aaa;color:#1a1a1a;outline:none;cursor:text">
         Challan No:&nbsp;&nbsp;&nbsp;<strong>${h.ChallanNo || ''}</strong>
       </td>
       <td ${_CE} style="padding:8px 12px;border-bottom:1px solid #aaa;color:#1a1a1a;outline:none;cursor:text">
+=======
+    <!-- -- Challan No / Place of Sales Promotion -- -->
+    <tr>
+      <td style="padding:8px 12px;border-right:1px solid #aaa;border-bottom:1px solid #aaa;color:#1a1a1a">
+        Challan No:&nbsp;&nbsp;&nbsp;<strong>${h.ChallanNo || ''}</strong>
+      </td>
+      <td style="padding:8px 12px;border-bottom:1px solid #aaa;color:#1a1a1a">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         Place Of Sales Promotion<br>
         <strong>${h.PlaceOfSalesPromotion || ''}</strong>
       </td>
     </tr>
+<<<<<<< HEAD
     <!-- Date / Transportation By -->
     <tr>
       <td ${_CE} style="padding:8px 12px;border-right:1px solid #aaa;border-bottom:1px solid #aaa;color:#1a1a1a;outline:none;cursor:text">
@@ -349,6 +395,20 @@ function _chalRender() {
       </td>
     </tr>
     <!-- Product Description Table -->
+=======
+    <!-- -- Date / Transportation By -- -->
+    <tr>
+      <td style="padding:8px 12px;border-right:1px solid #aaa;border-bottom:1px solid #aaa;color:#1a1a1a">
+        Date&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;<strong>${challanDateStr}</strong>
+      </td>
+      <td style="padding:8px 12px;border-bottom:1px solid #aaa;color:#1a1a1a">
+        Transportation By:&nbsp;&nbsp;&nbsp;<strong>${h.TransportationBy || ''}</strong>
+        ${h.trackid ? `&nbsp;&nbsp;&nbsp;${h.trackid}` : ''}
+        ${h.CourierLink ? `<br><span style="font-size:10px">${h.CourierLink}</span>` : ''}
+      </td>
+    </tr>
+    <!-- -- Product Description Table -- -->
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     <tr>
       <td colspan="2" style="padding:0;border-bottom:1px solid #aaa;background:#fff">
         <table style="width:100%;border-collapse:collapse;background:#fff">
@@ -365,7 +425,11 @@ function _chalRender() {
             <!-- "For Sales Promotion No Commercial Value" line -->
             <tr style="border-top:1px solid #e0e0e0;background:#fff">
               <td style="padding:5px 8px;border:1px solid #e0e0e0;background:#fff"></td>
+<<<<<<< HEAD
               <td ${_CE} style="padding:5px 8px;border:1px solid #e0e0e0;font-weight:bold;color:#000;background:#fff;outline:none;cursor:text">
+=======
+              <td style="padding:5px 8px;border:1px solid #e0e0e0;font-weight:bold;color:#000;background:#fff">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
                 ( For Sales Promotion No Commercial Value )
               </td>
               <td style="border:1px solid #e0e0e0;background:#fff"></td>
@@ -375,25 +439,44 @@ function _chalRender() {
             <tr style="border-top:1px solid #aaa;font-weight:bold;background:#fff">
               <td style="padding:6px 8px;border:1px solid #ccc;background:#fff"></td>
               <td style="padding:6px 8px;border:1px solid #ccc;color:#000;background:#fff;font-weight:bold">Total</td>
+<<<<<<< HEAD
               <td ${_CE} style="padding:6px 8px;border:1px solid #ccc;text-align:center;color:#000;background:#fff;font-weight:bold;outline:none;cursor:text">${totalPcs}</td>
               <td ${_CE} style="padding:6px 8px;border:1px solid #ccc;text-align:right;color:#000;background:#fff;font-weight:bold;outline:none;cursor:text">${totalAmount.toFixed(0)}</td>
+=======
+              <td style="padding:6px 8px;border:1px solid #ccc;text-align:center;color:#000;background:#fff;font-weight:bold">${totalPcs}</td>
+              <td style="padding:6px 8px;border:1px solid #ccc;text-align:right;color:#000;background:#fff;font-weight:bold">${totalAmount.toFixed(0)}</td>
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
             </tr>
           </tbody>
         </table>
       </td>
     </tr>
+<<<<<<< HEAD
     <!-- Large empty space (fills remaining page height) -->
     <tr class="chl-blank-row"><td colspan="2" style="border-bottom:1px solid #aaa"></td></tr>
     <!-- Declaration 1 -->
     <tr>
       <td ${_CE} colspan="2" style="padding:8px 12px;border-bottom:1px solid #aaa;font-size:10.5px;color:#1a1a1a;line-height:1.5;outline:none;cursor:text">
+=======
+    <!-- -- Large empty space (for transport/receiver use) -- -->
+    <tr><td colspan="2" style="height:180px;border-bottom:1px solid #aaa"></td></tr>
+    <!-- -- Declaration 1 -- -->
+    <tr>
+      <td colspan="2" style="padding:8px 12px;border-bottom:1px solid #aaa;font-size:10.5px;color:#1a1a1a;line-height:1.5">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         Declaration- Good here in mention are sent for Sales Promotion no commercial value and the same shall be processed
         / manufacture and return with in one year from the date of this document
       </td>
     </tr>
+<<<<<<< HEAD
     <!-- Declaration 2 -->
     <tr>
       <td ${_CE} colspan="2" style="padding:8px 12px;border-bottom:1px solid #aaa;font-size:10.5px;color:#1a1a1a;line-height:1.5;outline:none;cursor:text">
+=======
+    <!-- -- Declaration 2 -- -->
+    <tr>
+      <td colspan="2" style="padding:8px 12px;border-bottom:1px solid #aaa;font-size:10.5px;color:#1a1a1a;line-height:1.5">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         Declaration: (1) We declare that this Delivery Challan shows the actual price of the goods described and that all
         particulars are true and correct. (2) The diamonds herein invoiced have been purchased from legitimate sources not
         involved in funding conflict and in compliance with the United Nations Resolutions. The seller hereby guarantees that
@@ -402,16 +485,26 @@ function _chalRender() {
         and/or written guarantees
       </td>
     </tr>
+<<<<<<< HEAD
     <!-- CIN No / Certified -->
     <tr>
       <td ${_CE} style="padding:8px 12px;border-right:1px solid #aaa;border-bottom:1px solid #aaa;font-size:10.5px;color:#1a1a1a;vertical-align:top;outline:none;cursor:text">
+=======
+    <!-- -- CIN No / Certified -- -->
+    <tr>
+      <td style="padding:8px 12px;border-right:1px solid #aaa;border-bottom:1px solid #aaa;font-size:10.5px;color:#1a1a1a;vertical-align:top">
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
         CIN No &nbsp;&nbsp; ${h.CINNo || ''}
       </td>
       <td style="padding:8px 12px;border-bottom:1px solid #aaa;font-size:10.5px;color:#1a1a1a;vertical-align:top">
         Certified that the particulars given above are true and correct
       </td>
     </tr>
+<<<<<<< HEAD
     <!-- Signatures -->
+=======
+    <!-- -- Signatures -- -->
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     <tr>
       <td style="padding:20px 12px 14px;border-right:1px solid #aaa;text-align:center;vertical-align:bottom;font-size:10.5px;color:#1a1a1a">
         <div style="border-top:1px solid #555;width:180px;margin:0 auto 6px"></div>
@@ -424,10 +517,15 @@ function _chalRender() {
       </td>
     </tr>
   </table>`;
+<<<<<<< HEAD
   window._chalLastH = h;  // expose header for cross-page live-update
 }
 
 
+=======
+}
+
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 // -- Challan filename helper ------------------------------------------
 function _chalFilename(ext) {
   const now = new Date(), pad = n => String(n).padStart(2, '0');
@@ -451,7 +549,11 @@ window._chalExport = () => {
   if (old) old.remove();
   const overlay = document.createElement('div');
   overlay.id = 'chl-export-dlg';
+<<<<<<< HEAD
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;display:flex;align-items:center;justify-content:center';
+=======
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:center;justify-content:center';
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
   overlay.innerHTML = `
     <div style="background:#f0f0f0;border:2px solid #aaa;border-radius:4px;width:420px;font-family:Arial,sans-serif;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,.4)">
       <div style="background:linear-gradient(to bottom,#2a5aba,#1a3e8e);color:#fff;padding:8px 14px;font-weight:bold;font-size:14px;display:flex;justify-content:space-between;align-items:center">
@@ -482,6 +584,7 @@ window._chalExport = () => {
   };
 };
 
+<<<<<<< HEAD
 // -- Print / PDF window: captures live (possibly edited) DOM --
 function _chalPrintWindow(isPdf = false, pdfFilename = '') {
   const page = document.getElementById('chl-report-page');
@@ -491,11 +594,31 @@ function _chalPrintWindow(isPdf = false, pdfFilename = '') {
   const capturedHTML = page.innerHTML.replace(/ contenteditable="true"/g, '');
   const docTitle = pdfFilename || _chalFilename('pdf').replace(/\.pdf$/, '');
   const origin   = location.origin;
+=======
+// -- Print / PDF window -----------------------------------------------
+function _chalPrintWindow(isPdf = false, pdfFilename = '') {
+  if (!_chalHeader) return showToast('No challan loaded', 'error');
+  const h = _chalHeader || {};
+  const rows = _chalDetail || [];
+  const totalPcs = rows.reduce((s, r) => s + (Number(r.Pcs) || 0), 0);
+  const totalAmount = rows.reduce((s, r) => s + (Number(r.Amount) || 0), 0);
+  const docTitle = pdfFilename || _chalFilename('pdf').replace(/\.pdf$/, '');
+  let challanDateStr = _chalFmtDate(h.ChallanDate);
+
+  const productRows = rows.map(r => `
+    <tr>
+      <td style="padding:4px 7px;border:1px solid #ccc;text-align:center">${r.SrlNo || r.srlno || ''}</td>
+      <td style="padding:4px 7px;border:1px solid #ccc;color:#1a56db">${r.ProdDesc || '-'}</td>
+      <td style="padding:4px 7px;border:1px solid #ccc;text-align:center">${r.Pcs || 0}</td>
+      <td style="padding:4px 7px;border:1px solid #ccc;text-align:right;color:#c0392b">${Number(r.Amount || 0).toFixed(0)}</td>
+    </tr>`).join('');
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
   const win = window.open('', '_blank', 'width=920,height=750');
   win.document.write(`<!DOCTYPE html><html><head>
     <title>${docTitle}</title>
     <style>
+<<<<<<< HEAD
       @page { margin: 0; size: A4; }
       * { box-sizing: border-box; }
       html, body { height: 100%; margin: 0; }
@@ -512,12 +635,24 @@ function _chalPrintWindow(isPdf = false, pdfFilename = '') {
       @media print {
         .no-print { display: none }
       }
+=======
+      @page { margin: 0; }
+      *{box-sizing:border-box}
+      body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:0;padding:10mm 12mm 8mm 12mm}
+      .no-print{background:#f0f4ff;border-bottom:1px solid #ccd;padding:10px;text-align:center;margin-bottom:14px}
+      @media print{.no-print{display:none}}
+      table.outer{width:100%;border:2px solid #333;border-collapse:collapse}
+      table.outer td,table.outer th{font-size:10.5px}
+      .prod th{background:#f0f0f0;font-weight:bold;padding:5px 7px;border:1px solid #aaa;text-align:left}
+      .prod td{padding:4px 7px;border:1px solid #ccc;vertical-align:middle}
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
     </style>
   </head><body>
     <div class="no-print">
       <button onclick="window.print()" style="padding:6px 22px;background:#2a5aba;color:#fff;border:none;font-size:13px;cursor:pointer;border-radius:3px">&#128438; Print / Save as PDF</button>
       <button onclick="window.close()" style="margin-left:10px;padding:6px 16px;background:#ccc;color:#333;border:none;font-size:13px;cursor:pointer;border-radius:3px">Close</button>
     </div>
+<<<<<<< HEAD
     ${capturedHTML}
   </body></html>`);
   win.document.close();
@@ -529,6 +664,108 @@ window._chalPrint = () => _chalPrintWindow(false);
 
 
 
+=======
+    <table class="outer">
+      <tr>
+        <td colspan="2" style="padding:10px 14px 8px;border-bottom:1px solid #999">
+          <table style="width:100%;border-collapse:collapse"><tr>
+            <td style="width:20%"></td>
+            <td style="text-align:center">
+              <div style="font-size:15px;font-weight:bold;letter-spacing:1px">DELIVERY CHALLAN</div>
+              <div style="font-size:10px;font-style:italic">(Goods sent for Sales Promotion)</div>
+            </td>
+            <td style="width:20%;text-align:right;vertical-align:middle">
+              <img src="${location.origin}/kisna-logo.png" alt="KISNA" style="max-width:110px;max-height:60px;object-fit:contain">
+            </td>
+          </tr></table>
+        </td>
+      </tr>
+      <tr>
+        <td style="width:50%;padding:8px 11px;vertical-align:top;border-right:1px solid #aaa;border-bottom:1px solid #aaa;line-height:1.65">
+          From,${h.FromCompanyName || ''}<br>${h.FromAddr1 || ''}<br>${h.FromAddr2 || ''}<br>${h.FromAddr3 || ''}<br>
+          State:${h.FromState || ''}<br>Contact No-${h.FromContactNo || ''}<br>GST No.${h.FromGSTNo || ''}<br>PAN:${h.FromPAN || ''}
+        </td>
+        <td style="width:50%;padding:8px 11px;vertical-align:top;border-bottom:1px solid #aaa;line-height:1.65">
+          To,<br>${h.ToCompanyName || ''}<br>${h.ToPersonName || ''}<br>${h.ToAddr1 || ''} ${h.ToAddr2 || ''}<br>
+          ${h.ToAddr3 || ''}<br>Contact No-${h.ToContactNo || ''}<br>GST No.${h.ToGSTNo || ''}
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:7px 11px;border-right:1px solid #aaa;border-bottom:1px solid #aaa">Challan No:&nbsp;&nbsp;&nbsp;<strong>${h.ChallanNo || ''}</strong></td>
+        <td style="padding:7px 11px;border-bottom:1px solid #aaa">Place Of Sales Promotion<br><strong>${h.PlaceOfSalesPromotion || ''}</strong></td>
+      </tr>
+      <tr>
+        <td style="padding:7px 11px;border-right:1px solid #aaa;border-bottom:1px solid #aaa">Date&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;<strong>${challanDateStr}</strong></td>
+        <td style="padding:7px 11px;border-bottom:1px solid #aaa">Transportation By:&nbsp;&nbsp;&nbsp;<strong>${h.TransportationBy || ''}</strong>${h.trackid ? '&nbsp;&nbsp;' + h.trackid : ''}</td>
+      </tr>
+      <tr>
+        <td colspan="2" style="padding:0;border-bottom:1px solid #aaa">
+          <table class="prod" style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="border-bottom:1px solid #aaa">
+                <th style="width:52px;border-right:1px solid #aaa;text-align:center">Sr No</th>
+                <th style="border-right:1px solid #aaa;text-align:left">Product Description</th>
+                <th style="width:65px;border-right:1px solid #aaa;text-align:center">Pcs</th>
+                <th style="width:80px;text-align:right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${productRows}
+              <tr style="border-top:1px solid #ddd">
+                <td></td>
+                <td style="font-weight:bold;padding:5px 7px;border:1px solid #ccc">( For Sales Promotion No Commercial Value )</td>
+                <td style="border:1px solid #ccc"></td><td style="border:1px solid #ccc"></td>
+              </tr>
+              <tr style="border-top:1px solid #aaa;font-weight:bold">
+                <td style="padding:5px 7px;border:1px solid #ccc"></td>
+                <td style="padding:5px 7px;border:1px solid #ccc">Total</td>
+                <td style="padding:5px 7px;border:1px solid #ccc;text-align:center">${totalPcs}</td>
+                <td style="padding:5px 7px;border:1px solid #ccc;text-align:right">${totalAmount.toFixed(0)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      <tr><td colspan="2" style="height:160px;border-bottom:1px solid #aaa"></td></tr>
+      <tr>
+        <td colspan="2" style="padding:7px 11px;border-bottom:1px solid #aaa;font-size:10px;line-height:1.5">
+          Declaration- Good here in mention are sent for Sales Promotion no commercial value and the same shall be processed / manufacture and return with in one year from the date of this document
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="padding:7px 11px;border-bottom:1px solid #aaa;font-size:10px;line-height:1.5">
+          Declaration: (1) We declare that this Delivery Challan shows the actual price of the goods described and that all particulars are true and correct. (2) The diamonds herein invoiced have been purchased from legitimate sources not involved in funding conflict and in compliance with the United Nations Resolutions. The seller hereby guarantees that these diamonds are conflict free, based on personal knowledge and/or written guarantees provided by the supplier of these diamonds. (3) The diamonds invoiced are exclusively of natural origin and untreated based on personal knowledge and/or written guarantees
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:7px 11px;border-right:1px solid #aaa;border-bottom:1px solid #aaa;font-size:10px;vertical-align:top">
+          CIN No &nbsp;&nbsp; ${h.CINNo || ''}
+        </td>
+        <td style="padding:7px 11px;border-bottom:1px solid #aaa;font-size:10px;vertical-align:top">
+          Certified that the particulars given above are true and correct
+          
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:20px 11px 12px;border-right:1px solid #aaa;text-align:center;vertical-align:bottom;font-size:10px">
+          <div style="border-top:1px solid #555;width:170px;margin:0 auto 5px"></div>
+          <strong>Receivers signature and date</strong>
+        </td>
+        <td style="padding:12px 11px 12px;text-align:right;vertical-align:bottom;font-size:10px">
+          <div style="font-weight:bold;font-size:10.5px;margin-bottom:60px">H. K. Jewels Pvt. Ltd. (Mumbai)</div>
+          <div style="border-top:1px solid #555;width:170px;margin:0 0 5px auto"></div>
+          <strong>Authorised signatory</strong>
+        </td>
+      </tr>
+    </table>
+  </body></html>`);
+  win.document.close();
+  if (isPdf) { setTimeout(() => win.print(), 600); }
+}
+window._chalPrint = () => _chalPrintWindow(false);
+
+
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 // ========================================================
 // STOCK REPORT &#8594; View Items Stock
 // ========================================================
@@ -1039,8 +1276,13 @@ let _invData = [], _invType = '', _invSortCol = -1, _invSortDir = 1;
 
 const _invInwardCols = ['OrderNumber', 'DCNumber', 'InvoiceNumber', 'InwardDate', 'VendorName', 'CategoryName', 'ItemName', 'TotalQty', 'DCQty'];
 const _invInwardHdrs = ['Order No', 'DC Number', 'Invoice Number', 'Inward Date', 'Vendor', 'Category', 'Item Name', 'Total Qty', 'DC Qty'];
+<<<<<<< HEAD
 const _invOutwardCols = ['ChallanNo', 'DistCode', 'DealerCompanyName', 'ContactPersonName', 'Addr1', 'Addr2', 'Addr3', 'Mobile', 'GST', 'PlaceOfSalesPromotion', 'RequestMode', 'DeliverMode', 'DeliverByPersonName', 'CourierName', 'TrackId', 'CourierPersonMob', 'CourierPersonLocation', 'IssueNote', 'ItemName', 'RequestQty', 'IssueQty', 'IssueDate'];
 const _invOutwardHdrs = ['Challan No', 'Distinct Code', 'Dealer Company', 'Contact Person', 'Addr 1', 'Addr 2', 'Addr 3', 'Mobile', 'GST', 'Place of Sales Promotion', 'Request Mode', 'Deliver Mode', 'Deliver By', 'Courier Name', 'Track ID', 'Courier Mob', 'Courier Location', 'Issue Note', 'Item Name', 'Req Qty', 'Issue Qty', 'Issue Date'];
+=======
+const _invOutwardCols = ['ChallanNo', 'DealerCompanyName', 'ContactPersonName', 'Addr1', 'Addr2', 'Addr3', 'Mobile', 'GST', 'PlaceOfSalesPromotion', 'RequestMode', 'DeliverMode', 'DeliverByPersonName', 'CourierName', 'TrackId', 'CourierPersonMob', 'CourierPersonLocation', 'IssueNote', 'ItemName', 'RequestQty', 'IssueQty', 'IssueDate'];
+const _invOutwardHdrs = ['Challan No', 'Dealer Company', 'Contact Person', 'Addr 1', 'Addr 2', 'Addr 3', 'Mobile', 'GST', 'Place of Sales Promotion', 'Request Mode', 'Deliver Mode', 'Deliver By', 'Courier Name', 'Track ID', 'Courier Mob', 'Courier Location', 'Issue Note', 'Item Name', 'Req Qty', 'Issue Qty', 'Issue Date'];
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
 
 registerPage('inventory-report', async () => {
   return `${pageHeader('Inventory Report', 'fa-clipboard-list', 'Reports / Inventory Report')}
