@@ -1,0 +1,11 @@
+<<<<<<< HEAD
+
+sessions/
+node_modules/
+.env
+
+=======
+sessions/
+node_modules/
+venv/
+>>>>>>> 676f6c8848f01887d27394222d0b75be2d5763f2
